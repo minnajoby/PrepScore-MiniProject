@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'profiles',
 ]
 
 MIDDLEWARE = [
@@ -74,8 +75,12 @@ WSGI_APPLICATION = 'prepscore_project.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'prepscore_db',       # You can name this whatever you want
+        'USER': 'postgres',           # This is usually the default superuser
+        'PASSWORD': '1215',           # <-- IMPORTANT: Put your password here
+        'HOST': 'localhost',          # This means the database is on your own computer
+        'PORT': '5432',               # This is the default port for PostgreSQL
     }
 }
 
