@@ -9,6 +9,10 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 from pathlib import Path
 
@@ -20,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-#n-izzc&513a0_&)qh*%y60gc!&y@axp)$j1gm6&$@=klcix&&'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -76,11 +80,11 @@ WSGI_APPLICATION = 'prepscore_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'prepscore_db',       # You can name this whatever you want
-        'USER': 'postgres',           # This is usually the default superuser
-        'PASSWORD': '1215',           # <-- IMPORTANT: Put your password here
-        'HOST': 'localhost',          # This means the database is on your own computer
-        'PORT': '5432',               # This is the default port for PostgreSQL
+        'NAME': 'prepscore_db',              # The name of the database you just created
+        'USER': 'postgres',                   # The default PostgreSQL superuser
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': 'localhost',                  # 'localhost' means it's on your own computer
+        'PORT': '5432',                       # The default port for PostgreSQL
     }
 }
 
