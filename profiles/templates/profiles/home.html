@@ -1,10 +1,134 @@
+{% load static %} <!-- This is essential to load static files -->
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>PrepScore</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrepScore: Career Profile Optimizer</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+        body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    
+    /* --- THIS IS THE MODIFIED PART --- */
+    /* Use the new background image */
+    background-image: url("{% static 'images/homepage-image.png' %}");
+    
+    /* This color will be a fallback if the image doesn't load */
+    background-color: #f0f2f5;
+    
+    /* This makes the image cover the entire screen without stretching weirdly */
+    background-size: cover;
+    
+    /* This centers the image on the page */
+    background-position: center;
+
+    /* This prevents the background from repeating if it's smaller than the screen */
+    background-repeat: no-repeat;
+    /* --- END OF MODIFICATION --- */
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+        .main-container {
+            display: flex;
+            width: 900px;
+            height: 550px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .left-pane {
+            flex: 1;
+            background-image: url("{% static 'images/hero-image.jpg' %}");
+            background-size: 190%; /* Zooms into the photo part */
+            background-position: 25% 50%; /* Centers the people */
+        }
+        .right-pane {
+            flex: 1;
+            background-color: white;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+        }
+        .logo {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #007BFF; /* A blue color similar to the logo */
+            margin-bottom: 20px;
+        }
+        .headline {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .graph-placeholder {
+            width: 100%;
+            height: 150px;
+            background-image: url("{% static 'images/hero-image.jpg' %}");
+            background-size: 210%; /* Zooms into the graph part */
+            background-position: 90% 35%;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        .features-list {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 30px;
+        }
+        .features-list li {
+            margin-bottom: 15px;
+            font-weight: 500;
+            color: #555;
+        }
+        .cta-button {
+            display: inline-block;
+            background-color: #007BFF;
+            color: white;
+            padding: 12px 25px;
+            text-align: center;
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            margin-top: auto; /* Pushes button to the bottom */
+            transition: background-color 0.3s;
+        }
+        .cta-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to PrepScore!</h1>
-    <p>This is your new custom homepage.</p>
+    <div class="main-container">
+        <div class="left-pane">
+            <!-- The background image is handled by CSS -->
+        </div>
+        <div class="right-pane">
+            <div class="logo">PrepScore: Career Profile Optimizer</div>
+            <div class="headline">Unlock Your Career Potential</div>
+            <div class="graph-placeholder"></div>
+            
+            <ul class="features-list">
+                <li>✓ Skill Analysis</li>
+                <li>✓ Resume Enhancement</li>
+                <li>✓ Extracurricular Achievements</li>
+                <li>✓ Interview Prep</li>
+            </ul>
+
+            <!-- This block checks if the user is authenticated (logged in) -->
+            {% if user.is_authenticated %}
+            <!-- If they ARE logged in, show this button -->
+            <a href="{% url 'dashboard' %}" class="cta-button">Go to Your Dashboard</a>
+            {% else %}
+            <!-- If they are NOT logged in, show this button -->
+            <a href="{% url 'register' %}" class="cta-button">Create Your Profile</a>
+            {% endif %}
+        </div>
+    </div>
 </body>
 </html>

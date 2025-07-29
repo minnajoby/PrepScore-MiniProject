@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+    <style>
+        body { 
+            background: #f6f8fb; 
+            font-family: Arial, sans-serif;
+        }
+        .register-container {
+            max-width: 340px;
+            margin: 80px auto;
+            padding: 24px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+        .register-container h2 {
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        form input {
+            width: 100%;
+            padding: 10px 8px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: #f9fafe;
+        }
+        .reg-btn {
+            width: 100%;
+            padding: 10px;
+            color: #fff;
+            background: #4f8ef7;
+            border: none;
+            border-radius: 6px;
+            margin-top: 12px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .error {
+            color: #e63946;
+            margin: 0 0 10px 0;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <h2>Create Your Account</h2>
+        {% if error %}<div class="error">{{ error }}</div>{% endif %}
+        <form method="POST">
+            {% csrf_token %}
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password1" placeholder="Password" required>
+            <input type="password" name="password2" placeholder="Confirm Password" required>
+            <button class="reg-btn" type="submit">Register</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -12,7 +12,14 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from dotenv import load_dotenv
 
-load_dotenv()
+# Construct full path to your .env inside profiles folder
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+env_path = os.path.join(BASE_DIR, 'profiles', '.env')
+
+load_dotenv(dotenv_path=env_path)
+
+print("DB_PASSWORD from environment:", os.getenv('DB_PASSWORD'))
+
 
 from pathlib import Path
 
@@ -129,3 +136,7 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# In prepscore_project/settings.py (at the very bottom)
+
+STATIC_URL = 'static/'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
