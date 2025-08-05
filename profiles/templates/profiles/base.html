@@ -1,0 +1,229 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- The title will be filled in by the child template -->
+    <title>{% block title %}PrepScore{% endblock %}</title>
+
+    <!-- Google Fonts Import -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Basic styles for the entire site */
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            margin: 0; 
+            background-color: #ffffff; 
+            color: #333;
+        }
+        main {
+            /* This ensures there's no double padding from the base on pages with their own layout */
+        }
+        /* =================================
+   NEW HEADER / NAVIGATION BAR STYLES
+   ================================= */
+
+nav {
+    background-color: #ffffff; /* A clean white background */
+    padding: 0 5%; /* Vertical padding is 0, Horizontal padding is 5% of screen width */
+    height: 70px; /* A fixed, clean height for the navbar */
+    display: flex;
+    justify-content: space-between; /* Pushes logo to left and links to right */
+    align-items: center; /* Vertically aligns items in the middle */
+    
+    /* A subtle but important shadow to lift the nav off the page */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08); 
+    
+    /* Make the nav stick to the top of the page */
+    position: sticky;
+    top: 0;
+    z-index: 1000; /* Ensures it stays on top of all other content */
+}
+
+/* Styling for the "PrepScore" logo */
+nav a.logo {
+    font-weight: 700;
+    font-size: 1.6rem;
+    color: #007BFF;
+    text-decoration: none;
+}
+
+/* A container for the links on the right */
+nav .nav-links {
+    display: flex;
+    align-items: center;
+}
+
+/* General styling for all links and the logout button */
+nav .nav-links a, nav .nav-links button {
+    margin-left: 2rem; /* Space between each item */
+    text-decoration: none;
+    color: #333; /* A strong, dark text color */
+    font-weight: 600;
+    font-size: 1rem;
+    transition: color 0.3s; /* Smooth color change on hover */
+}
+
+/* Specific styling for the logout button to make it look like a link */
+nav .nav-links button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+/* The hover effect for all links/buttons */
+nav .nav-links a:hover, nav .nav-links button:hover {
+    color: #007BFF; /* Links turn blue on hover */
+}
+
+/* Special styling for the "Register" button to make it stand out */
+nav .nav-links a.register-btn {
+    background-color: #007BFF;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 6px;
+    transition: background-color 0.3s, color 0.3s;
+}
+nav .nav-links a.register-btn:hover {
+    background-color: #0056b3;
+    color: white;
+}
+/* =================================
+   NEW FOOTER STYLES
+   ================================= */
+
+footer {
+    background-color: #2c3e50; /* A dark, professional blue-gray */
+    color: #adb5bd; /* A soft, light gray for the text */
+    padding-top: 40px;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-around; /* Spreads the columns out */
+    flex-wrap: wrap; /* Allows columns to stack on smaller screens */
+    max-width: 1200px;
+    margin: 0 auto; /* Centers the content */
+    padding: 0 20px;
+}
+
+.footer-section {
+    flex: 1;
+    min-width: 250px; /* Ensures columns don't get too squished */
+    margin-bottom: 30px;
+}
+
+.footer-section.links {
+    margin-left: 50px; /* Pushes the element 50px to the right */
+}
+.footer-section h3 {
+    color: #ffffff; /* White color for the headings */
+    margin-bottom: 20px;
+    font-size: 1.2rem;
+}
+
+.footer-section .logo-text {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.footer-section ul {
+    list-style: none; /* Removes bullet points */
+    padding: 0;
+}
+
+.footer-section ul li {
+    margin-bottom: 10px;
+}
+
+.footer-section a {
+    text-decoration: none;
+    color: #adb5bd;
+    transition: color 0.3s, padding-left 0.3s; /* <-- ADD 'padding-left' to the transition */
+    display: inline-block; /* <-- ADD THIS LINE so padding works correctly */
+}
+
+.footer-section a:hover {
+    color: #ffffff; /* Links brighten on hover */
+}
+
+.footer-bottom {
+    text-align: center;
+    padding: 20px;
+    border-top: 1px solid #495057; /* A subtle line to separate the bottom bar */
+    margin-top: 20px;
+}
+    </style>
+    
+    <!-- This block allows child templates to add their own unique CSS -->
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <!-- ==================== NAVIGATION BAR ==================== -->
+    <nav>
+        <a href="{% url 'home' %}" class="logo">PrepScore</a>
+        <div class="nav-links">
+            {% if user.is_authenticated %}
+                <a href="{% url 'dashboard' %}">Dashboard</a>
+                <form action="{% url 'logout' %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit">Logout</button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}">Login</a>
+                <a href="{% url 'register' %}">Register</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <!-- ==================== MAIN CONTENT AREA ==================== -->
+    <main>
+        {% block content %}
+        <!-- The content from child pages like home.html or dashboard.html will be inserted here. -->
+        {% endblock %}
+    </main>
+        </main>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section about">
+                <h3 class="logo-text">PrepScore</h3>
+                <p>
+                    An intelligent career profile optimizer designed to help students and professionals understand their job readiness and enhance their career potential.
+                </p>
+            </div>
+            <div class="footer-section links">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                    <!-- You can add an 'About' or 'Contact' page link here later -->
+                </ul>
+            </div>
+            <div class="footer-section auth-links">
+                <h3>Get Started</h3>
+                <ul>
+                    {% if user.is_authenticated %}
+                        <li><p>Welcome, {{ user.username }}!</p></li>
+                    {% else %}
+                        <li><a href="{% url 'login' %}">Login</a></li>
+                        <li><a href="{% url 'register' %}">Register</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            © {% now "Y" %} PrepScore | All Rights Reserved.
+        </div>
+    </footer>
+    <!-- ================================================== -->
+
+</body>
+</html>
+</body>
+</html>
