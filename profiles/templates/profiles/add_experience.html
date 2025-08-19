@@ -1,0 +1,14 @@
+{% extends 'profiles/base.html' %}
+
+{% block title %}Add Work Experience{% endblock %}
+
+{% block content %}
+    <h2>Add a New Work Experience Entry</h2>
+    <hr>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Save Experience</button>
+    </form>
+{% endblock %}

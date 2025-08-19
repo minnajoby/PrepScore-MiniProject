@@ -5,118 +5,146 @@
 
 {% block extra_head %}
 <style>
-    /* 
-       This CSS is for the Gradient Overlay method.
-       It replaces any previous "frosting" or "overlay" styles.
-    */
-
-    /* The Main Hero Section Container */
+    /* =================================
+       HERO SECTION STYLES
+       ================================= */
     .hero-section {
-        position: relative; /* This is essential for placing the overlay correctly */
-        display: flex;
-        align-items: center; /* This vertically centers your text content */
-        min-height: 90vh; /* Makes the section nice and tall */
-        padding: 40px 5%; /* Adds some space on the left and right edges */
-        
-        /* Sets the background image */
-        background-image: url("{% static 'images/homepage-image.png' %}"); /* <-- IMPORTANT: UPDATE YOUR FILENAME HERE */
-        background-size: cover; /* Makes the image fill the container without distortion */
-        background-position: center; /* Centers the image */
-        
-        color: white; /* Default text color for everything inside */
-    }
-
-    /* The Gradient Overlay pseudo-element */
-    .hero-section::before {
-        content: ''; /* This is required for ::before to work */
-        position: absolute; /* Takes it out of the normal document flow */
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        
-        /* The Gradient: Dark on the left, fading to transparent on the right */
-        background: linear-gradient(
-            to right, /* Direction of the fade */
-            rgba(0, 0, 0, 0.85) 0%,  /* Starts almost solid black on the far left */
-            rgba(0, 0, 0, 0.7) 40%,  /* Fades to 70% dark at the 40% width mark */
-            rgba(0, 0, 0, 0.1) 70%,  /* Fades to very transparent by the 70% mark */
-            rgba(0, 0, 0, 0) 100%   /* Fully transparent on the far right */
-        );
-        
-        z-index: 1; /* Puts the overlay on top of the background image... */
-    }
-
-    /* The Container for Your Text Content */
-    .hero-content {
-        position: relative; /* Lifts the content */
-        z-index: 2; /* ...and puts the text on top of the overlay */
-        max-width: 600px; /* Sets a max width for readability */
-        text-align: left; /* Aligns the text to the left */
-    }
-
-    /* Styling for the main headline */
-    .hero-section h1 {
-        font-size: 3.5rem;
-        font-weight: 700;
-        margin-bottom: 20px;
-        line-height: 1.2;
-    }
-
-    /* Styling for the sub-headline paragraph */
-    .hero-section p {
-        font-size: 1.25rem;
-        margin-bottom: 30px;
-        color: rgba(255, 255, 255, 0.9); /* A slightly softer white for the paragraph */
-    }
-
-    /* Styling for the main button */
-    .hero-section .cta-button {
-        background-color: #007BFF;
+        background-image: linear-gradient(to right, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.1) 70%, rgba(0,0,0,0) 100%), url("{% static 'images/homepage-image.png' %}");
+        background-size: cover;
+        background-position: center;
+        min-height: 100vh;
         color: white;
-        padding: 15px 30px;
-        text-decoration: none;
-        font-size: 1.2rem;
+    }
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        margin-left: 5%;
+    }
+
+    /* =================================
+       NEW "HOW IT WORKS" TIMELINE SECTION
+       ================================= */
+    .timeline-section {
+        background-color: #ffffff;
+        padding: 80px 20px;
+    }
+    .section-title {
+        text-align: center;
+        font-size: 2.5rem;
         font-weight: 600;
+        margin-bottom: 50px;
+        color: #333;
+    }
+    .timeline-container {
+        position: relative;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    .timeline-container::after {
+        content: '';
+        position: absolute;
+        width: 6px;
+        background-color: #e9ecef;
+        top: 0; bottom: 0; left: 50%;
+        margin-left: -3px;
+    }
+    .timeline-item {
+        padding: 10px 40px;
+        position: relative;
+        width: 50%;
+    }
+    .timeline-item::after {
+        content: '';
+        position: absolute;
+        width: 25px; height: 25px;
+        right: -17px;
+        background-color: white;
+        border: 4px solid #007BFF;
+        top: 15px;
+        border-radius: 50%;
+        z-index: 1;
+    }
+    .left { left: 0; }
+    .right { left: 50%; }
+    .right::after { left: -16px; }
+    .timeline-content {
+        padding: 20px 30px;
+        background-color: #f8f9fa;
+        position: relative;
         border-radius: 8px;
-        transition: background-color 0.3s, transform 0.2s;
-        border: none;
+        border: 1px solid #e9ecef;
     }
+    .timeline-content h3 { font-size: 1.5rem; margin-bottom: 10px; color: #333; }
+    .timeline-content p { color: #6c757d; }
 
-    .hero-section .cta-button:hover {
-        background-color: #0056b3;
-        transform: translateY(-3px);
+    /* Responsive styles for the timeline */
+    @media screen and (max-width: 768px) {
+        .timeline-container::after { left: 31px; }
+        .timeline-item { width: 100%; padding-left: 70px; padding-right: 25px; }
+        .left, .right { left: 0%; }
+        .left::after, .right::after { left: 15px; }
+
+        .hero-section { background-position: 70% center; min-height: 80vh; }
+        .hero-section h1 { font-size: 2.5rem; }
+        .hero-section p { font-size: 1.1rem; }
     }
-
-    /* Remove padding from the main content block that comes from base.html */
-    main {
-        padding: 0 !important;
-    }
-
 </style>
 {% endblock %}
 
 
 {% block content %}
 
-<!-- The Hero Section -->
-<section class="hero-section">
-    <div class="hero-content">
-        <h1>Unlock Your Career Potential</h1>
-        <p>
-            PrepScore intelligently analyzes your complete profile to give you a dynamic readiness score and actionable feedback.
-        </p>
-        
-        <!-- This logic correctly shows the right button based on login status -->
-        {% if user.is_authenticated %}
-            <a href="{% url 'dashboard' %}" class="cta-button">Go to Your Dashboard</a>
-        {% else %}
-            <a href="{% url 'register' %}" class="cta-button">Create Your Free Profile</a>
-        {% endif %}
+<!-- HERO SECTION (Using Bootstrap Grid) -->
+<div class="hero-section d-flex align-items-center">
+    <div class="container col-xxl-8 px-4 py-5 hero-content">
+        <div class="row align-items-center g-5 py-5">
+            <div class="col-lg-6 text-start">
+                <h1 class="display-4 fw-bold lh-1 mb-3">Unlock Your Career Potential</h1>
+                <p class="lead">
+                    Get your career readiness score.
+                </p>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg px-4 me-md-2">Go to Dashboard</a>
+                    {% else %}
+                        <a href="{% url 'register' %}" class="btn btn-primary btn-lg px-4 me-md-2">Create Your Profile</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- NEW "HOW IT WORKS" TIMELINE -->
+<section class="timeline-section">
+    <h2 class="section-title">How It Works</h2>
+    <div class="timeline-container">
+
+        <!-- Step 1 -->
+        <div class="timeline-item left">
+            <div class="timeline-content">
+                <h3>1. Build Your Profile</h3>
+                <p>Easily add your academic qualifications, technical skills, certifications, and work experience in one place.</p>
+            </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="timeline-item right">
+            <div class="timeline-content">
+                <h3>2. Get Your PrepScore</h3>
+                <p>Our smart algorithm analyzes your data to generate your unique Career Readiness Score.</p>
+            </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="timeline-item left">
+            <div class="timeline-content">
+                <h3>3. Receive Actionable Feedback</h3>
+                <p>Get personalized suggestions on what skills to learn, projects to build, and certifications to earn.</p>
+            </div>
+        </div>
+
     </div>
 </section>
-
-<!-- You can add your other sections (Features, Benefits, etc.) here later -->
-<!-- For now, we are just focusing on getting the Hero Section perfect -->
 
 {% endblock %}

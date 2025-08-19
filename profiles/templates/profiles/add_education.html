@@ -1,0 +1,14 @@
+{% extends 'profiles/base.html' %}
+
+{% block title %}Add Education History{% endblock %}
+
+{% block content %}
+    <h2>Add a New Education Entry</h2>
+    <hr>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Save Education</button>
+    </form>
+{% endblock %}

@@ -1,13 +1,105 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Your Dashboard</title>
-</head>
-<body>
-    <h1>Welcome to your Dashboard, {{ user.username }}!</h1>
-    <p>This is your private, protected area.</p>
+{% extends 'profiles/base.html' %}
+
+{% block title %}Your Dashboard{% endblock %}
+
+{% block extra_head %}
+    <style>
+        .add-button {
+            display: inline-block;
+            margin-top: 15px; /* Added more space */
+            padding: 8px 15px;
+            background-color:rgb(13, 23, 71);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 600;
+        }
+        .add-button:hover {
+            background-color: rgb(8, 8, 59);
+        }
+        .profile-section {
+            background-color: #fff;
+            padding: 20px;
+            margin-top: 20px; /* Added space between sections */
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .profile-section ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .profile-section li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+    </style>
+{% endblock %}
+
+
+{% block content %}
+    <h2>Welcome to your Dashboard, {{ user.username }}!</h2>
+    <p>This is where you can manage all of your professional profile information.</p>
     <hr>
-    <p>Here we will soon list your skills, education, and experience.</p>
-</body>
-</html>
+
+    <!-- Section for Skills -->
+    <section class="profile-section">
+        <h3>Your Skills</h3>
+        
+        {% if skills %}
+            <ul>
+                {% for skill in skills %}
+                    <li>
+                        {{ skill.name }}
+                        <a href="{% url 'edit_skill' pk=skill.pk %}" style="margin-left: 10px; font-size: 0.8em; color: #007BFF;">(Edit)</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>You haven't added any skills yet.</p>
+        {% endif %}
+        
+        <a href="{% url 'add_skill' %}" class="add-button">Add New Skill</a>
+    </section>
+
+    <!-- Section for Education -->
+    <section class="profile-section">
+        <h3>Your Education</h3>
+
+        {% if educations %}
+            <ul>
+                {% for edu in educations %}
+                    <li>
+                        <strong>{{ edu.degree }}</strong> from {{ edu.institution }} 
+                        (Completed: {{ edu.year_of_completion }})
+                        <!-- Add Edit/Delete links for Education here later -->
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>You haven't added any education history yet.</p>
+        {% endif %}
+        
+        <a href="{% url 'add_education' %}" class="add-button">Add New Education</a>
+    </section>
+    
+    <!-- Section for Experience -->
+    <section class="profile-section">
+        <h3>Your Experience</h3>
+
+        {% if experiences %}
+            <ul>
+                {% for exp in experiences %}
+                    <li>
+                        <strong>{{ exp.title }}</strong> at {{ exp.company }}
+                        <!-- Add Edit/Delete links for Experience here later -->
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>You haven't added any work experience yet.</p>
+        {% endif %}
+        
+        <a href="{% url 'add_experience' %}" class="add-button">Add New Experience</a>
+    </section>
+
+{% endblock %}

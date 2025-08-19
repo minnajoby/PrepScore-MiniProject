@@ -1,0 +1,14 @@
+{% extends 'profiles/base.html' %}
+
+{% block title %}Add a New Skill{% endblock %}
+
+{% block content %}
+    <h2>Add a New Skill</h2>
+    <hr>
+
+    <form method="post">
+        {% csrf_token %} <!-- Required for security -->
+        {{ form.as_p }}   <!-- Renders the form fields as paragraphs -->
+        <button type="submit">Save Skill</button>
+    </form>
+{% endblock %}
