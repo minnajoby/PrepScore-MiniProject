@@ -1,0 +1,16 @@
+{% extends 'profiles/base.html' %}
+
+{% block title %}Confirm Deletion{% endblock %}
+
+{% block content %}
+    <h2>Confirm Deletion</h2>
+    <hr>
+    <p>Are you sure you want to delete the {{ type }}: <strong>"{{ object }}"</strong>?</p>
+    <p>This action cannot be undone.</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" style="background-color: rgb(14, 10, 70); color: white;">Confirm Delete</button>
+        <a href="{% url 'dashboard' %}" style="margin-left: 10px;">Cancel</a>
+    </form>
+{% endblock %}

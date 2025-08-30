@@ -7,79 +7,66 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}PrepScore{% endblock %}</title>
 
-    <!-- Bootstrap CSS -->
+    <!-- Bootstrap CSS & Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-
-    <!-- Google Fonts (Optional, but nice to have) -->
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        /* A few custom overrides to make Bootstrap look even better */
+        html,
         body {
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
             font-family: 'Poppins', sans-serif;
             background-color: #f8f9fa;
-            /* A light gray background for the whole site */
         }
 
-        /* Make sure the main content area has some space */
         .main-content {
-            min-height: calc(100vh - 126px);
-            /* Full screen height minus header and footer */
+            flex-grow: 1;
+            /* This pushes the (now invisible) footer down */
         }
 
-        /* New, cleaner style for the logo */
-        nav a.navbar-brand {
-            font-weight: 700;
-            font-size: 1.6rem;
-            color: #032e5c!important;
-            /* Your custom dark blue color */
-            text-decoration: none;
-            transition: opacity 0.3s;
-            /* Add a nice hover effect */
-        }
-
-        /* Add a hover effect */
-        nav a.navbar-brand:hover {
-            opacity: 0.8;
+        /* Custom styles for your brand */
+        .navbar-brand {
+            font-weight: 700 !important;
+            font-size: 1.5rem !important;
+            color: #1d3557 !important;
+            /* A professional dark blue */
         }
     </style>
 
-    <!-- This block is for page-specific CSS -->
+    <!-- Block for page-specific CSS -->
     {% block extra_head %}{% endblock %}
 </head>
 
 <body>
 
-    <!-- In profiles/templates/profiles/base.html -->
-
-    <!-- ==================== NEW & IMPROVED NAVIGATION BAR ==================== -->
+    <!-- Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
-        <div class="container"> <!-- Use a standard container for better padding and alignment -->
-
-            <a class="navbar-brand fw-bold fs-4 d-flex align-items-center" href="{% url 'home' %}">
-                <i class="bi bi-graph-up-arrow me-2"></i>
-                PrepScore
-            </a>
-
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-nav"
-                aria-controls="main-nav" aria-expanded="false" aria-label="Toggle navigation">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">PrepScore</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-nav">
                 <span class="navbar-toggler-icon"></span>
             </button>
-
-            <!-- In base.html -->
             <div class="collapse navbar-collapse" id="main-nav">
-                <!-- Use ms-auto to push the whole block to the right on desktop -->
                 <ul class="navbar-nav ms-auto align-items-center">
-                    {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link fw-bold" href="{% url 'dashboard' %}">Dashboard</a>
+                        <a class="nav-link fw-bold" href="{% url 'about' %}">About</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-bold" href="{% url 'features' %}">Features</a>
+                    </li>
+                    {% if user.is_authenticated %}
+                    <li class="nav-item"><a class="nav-link fw-bold" href="{% url 'dashboard' %}">Dashboard</a></li>
                     <li class="nav-item">
                         <form action="{% url 'logout' %}" method="post">
                             {% csrf_token %}
@@ -88,34 +75,36 @@
                         </form>
                     </li>
                     {% else %}
-                    <!-- This is the Login link -->
-                    <li class="nav-item">
-                        <a class="nav-link fw-bold" href="{% url 'login' %}">Login</a>
-                    </li>
-                    <!-- This is the Register button -->
-                    <li class="nav-item ms-lg-2">
-                        <a class="btn btn-primary fw-bold" href="{% url 'register' %}">Register</a>
+                    <li class="nav-item"><a class="nav-link fw-bold" href="{% url 'login' %}">Login</a></li>
+                    <li class="nav-item ms-lg-2"><a class="nav-link fw-bold" href="{% url 'register' %}">Register</a>
                     </li>
                     {% endif %}
                 </ul>
             </div>
-
         </div>
     </nav>
 
-    <!-- ==================== MAIN CONTENT AREA ==================== -->
+    <!-- Main Content Area -->
     <main class="main-content">
-        {% block content %}{% endblock %}
+        <div class="container mt-4">
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+
+        {% block content %}
+        <!-- Page specific content will go here -->
+        {% endblock %}
     </main>
 
-    <!-- ==================== FOOTER ==================== -->
-    <footer class="bg-dark text-white text-center p-3 mt-auto">
-        <div class="container">
-            <p class="mb-0">&copy; {% now "Y" %} PrepScore | All Rights Reserved.</p>
-        </div>
-    </footer>
+    <!-- The footer block is now gone -->
 
-    <!-- Bootstrap JS Bundle (includes Popper) -->
+    <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>

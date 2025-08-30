@@ -1,0 +1,100 @@
+{% extends 'profiles/base.html' %}
+{% load static %}
+
+{% block title %}Features - PrepScore{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* --- DARK THEME STYLES FOR THE FEATURES PAGE --- */
+    body {
+        /* Set the dark background for the entire page */
+        background-color: #0d1b2a !important;
+    }
+    .dark-theme-heading { color: #ffffff; }
+    .dark-theme-lead { color: #bdc3c7; }
+    .dark-theme-text { color: #a9d6e5; }
+    
+    /* This style is to ensure the content vertically centers on the screen */
+    .content-wrapper {
+        display: flex;
+        flex-direction: column;
+        justify-content: center; /* This vertically centers the content */
+        min-height: calc(100vh - 150px); /* Adjust based on header/footer height */
+    }
+
+    /* Custom styling for the dark cards */
+    .dark-card {
+        background-color: #1b263b; /* A slightly lighter dark blue */
+        border: 1px solid #2a3a50;
+    }
+
+    /* Style for the separators */
+    hr {
+        border-top: 1px solid #2a3a50;
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="container my-5 content-wrapper">
+
+    <!-- 1. HERO HEADER -->
+    <div class="row justify-contentेंट-center text-left">
+        <div class="col-lg-8">
+            <h1 class="display-4 fw-bold dark-theme-heading">Core Features</h1>
+            <p class="lead dark-theme-lead">
+                The complete toolkit to optimize your professional profile.
+            </p>
+        </div>
+    </div>
+
+    <!-- SEPARATOR -->
+    <hr class="my-5 w-75 mx-auto">
+
+    <!-- 2. THREE-COLUMN FEATURE GRID -->
+    <div class="row g-4 text-center">
+        
+        <!-- Feature 1: Profile Management -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm dark-card">
+                <div class="card-body p-4">
+                    <i class="bi bi-person-badge display-4 text-primary mb-3"></i>
+                    <h3 class="h4 fw-bold dark-theme-heading">Profile Management</h3>
+                    <p class="dark-theme-text">
+                        Full CRUD functionality to build and manage a dynamic digital portfolio of your skills, education, and experience.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature 2: Intelligent Scoring -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm dark-card">
+                <div class="card-body p-4">
+                    <i class="bi bi-graph-up-arrow display-4 text-primary mb-3"></i>
+                    <h3 class="h4 fw-bold dark-theme-heading">Intelligent Scoring</h3>
+                    <p class="dark-theme-text">
+                        Receive a real-time, quantitative score that benchmarks your career readiness as your profile evolves.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature 3: Actionable Guidance -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm dark-card">
+                <div class="card-body p-4">
+                    <i class="bi bi-lightbulb display-4 text-primary mb-3"></i>
+                    <h3 class="h4 fw-bold dark-theme-heading">Actionable Guidance</h3>
+                    <p class="dark-theme-text">
+                        Get clear, data-driven advice and personalized suggestions on where to improve. (Coming Soon)
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div> <!-- End .row -->
+
+</div>
+{% endblock %}

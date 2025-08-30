@@ -1,0 +1,98 @@
+{% extends 'profiles/base.html' %}
+{% load static %}
+
+{% block title %}About PrepScore{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* --- DARK THEME STYLES FOR THE ABOUT PAGE --- */
+    body {
+        background-color: #0d1b2a !important;
+    }
+    .dark-theme-text { color: #a9d6e5; }
+    .dark-theme-heading { color: #ffffff; }
+    .dark-theme-lead { color: #bdc3c7; }
+    hr { border-top: 1px solid #2a3a50; }
+    .dark-theme-image { position: relative; }
+    .dark-theme-image::after {
+        content: ''; position: absolute; top: 0; left: 0;
+        width: 100%; height: 100%;
+        background-color: #0d1b2a; opacity: 0.1;
+        border-radius: .5rem;
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="container py-5">
+
+    <!-- 1. "ABOUT PREPSCORE" SECTION (NEW 2-COLUMN LAYOUT) -->
+<div class="row align-items-center g-5 py-5">
+    
+    <!-- Text Column -->
+    <div class="col-lg-7">
+        <h1 class="display-4 fw-bold dark-theme-heading lh-1 mb-3">About PrepScore</h1>
+        <p class="lead dark-theme-lead">
+            PrepScore is a smart web application designed to solve a critical problem for students and recent graduates: the uncertainty of their job market readiness. Our mission is to bridge the gap between academic accomplishment and industry expectation.
+        </p>
+        <p class="lead dark-theme-lead">
+            Our platform allows you to build a comprehensive digital profile of your skills, education, and experiences. We then use our smart algorithm to analyze this data and provide you with a simple, powerful "Career Readiness Score."
+        </p>
+    </div>
+
+    <!-- Image Column -->
+    <div class="col-lg-5">
+        <img src="{% static 'images/about.png' %}" class="img-fluid rounded shadow-lg" alt="An abstract image representing data and growth">
+    </div>
+
+</div>
+    <!-- SEPARATOR -->
+    <hr class="my-5">
+
+    <!-- 2. "HOW IT WORKS" SECTION -->
+    <div class="text-center mb-5">
+        <h2 class="display-5 fw-bold dark-theme-heading">How It Works</h2>
+    </div>
+
+    <!-- Step 1: Text on Left, Image on Right -->
+    <div class="row align-items-center mb-5">
+        <div class="col-lg-7">
+            <h3 class="fw-bold h2 dark-theme-heading">1. Build Your Comprehensive Profile</h3>
+            <p class="lead dark-theme-lead">
+                Easily add all your professional details in one place. Our intuitive forms for skills, education, certifications, and work experience make it simple to create a profile that's far more detailed than a traditional resume.
+            </p>
+        </div>
+        <div class="col-lg-5 dark-theme-image">
+            <img src="{% static 'images/step1.png' %}" class="img-fluid rounded shadow-lg" alt="Build Your Profile">
+        </div>
+    </div>
+
+    <!-- Step 2: Image on Left, Text on Right -->
+    <div class="row align-items-center mb-5">
+        <div class="col-lg-7 order-lg-2">
+            <h3 class="fw-bold h2 dark-theme-heading">2. Receive Your Instant PrepScore</h3>
+            <p class="lead dark-theme-lead">
+                The moment you add or update your profile, our smart algorithm instantly analyzes the data. It generates your unique Career Readiness Score, giving you a clear benchmark of your current standing.
+            </p>
+        </div>
+        <div class="col-lg-5 order-lg-1 dark-theme-image">
+            <img src="{% static 'images/step2.png' %}" class="img-fluid rounded shadow-lg" alt="Get Your PrepScore">
+        </div>
+    </div>
+
+    <!-- Step 3: Text on Left, Image on Right -->
+    <div class="row align-items-center">
+        <div class="col-lg-7">
+            <h3 class="fw-bold h2 dark-theme-heading">3. Get Actionable Feedback</h3>
+            <p class="lead dark-theme-lead">
+                PrepScore provides personalized suggestions on what skills to learn, projects to build, and certifications to earn. Use this targeted advice to improve your score and become a more competitive candidate.
+            </p>
+        </div>
+        <div class="col-lg-5 dark-theme-image">
+            <img src="{% static 'images/step3.png' %}" class="img-fluid rounded shadow-lg" alt="Receive Actionable Feedback">
+        </div>
+    </div>
+
+</div>
+{% endblock %}

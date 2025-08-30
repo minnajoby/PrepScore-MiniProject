@@ -1,150 +1,86 @@
 {% extends 'profiles/base.html' %}
 {% load static %}
 
-{% block title %}PrepScore: Career Profile Optimizer{% endblock %}
+{% block title %}PrepScore: Optimize Your Path to Success{% endblock %}
 
 {% block extra_head %}
 <style>
-    /* =================================
-       HERO SECTION STYLES
-       ================================= */
-    .hero-section {
-        background-image: linear-gradient(to right, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.1) 70%, rgba(0,0,0,0) 100%), url("{% static 'images/homepage-image.png' %}");
+    /* 
+       This is the key to the whole design.
+       It overrides the default styles from base.html ONLY for this page.
+    */
+    body {
+        /* We set the dark background on the body itself to ensure no gaps */
+        background-color: #1d3557 !important; 
+    }
+    
+    .main-content {
+        /* We remove default padding to allow the hero to be full-width */
+        padding: 0 !important;
+    }
+
+    .homepage-wrapper {
+        display: flex;
+        flex-direction: column;
+        /* Make the wrapper take up all space below the header */
+        min-height: calc(100vh - 73px); /* Adjust 73px to your header's exact height */
+        color: white;
+        position: relative; /* Needed for the background image overlay */
+    }
+
+    .homepage-wrapper::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background-image: url("{% static 'images/blue.png' %}"); 
         background-size: cover;
         background-position: center;
-        min-height: 100vh;
-        color: white;
+        opacity: 0.4; /* Adjust for desired darkness */
     }
+
     .hero-content {
-        position: relative;
-        z-index: 2;
-        margin-left: 5%;
-    }
-
-    /* =================================
-       NEW "HOW IT WORKS" TIMELINE SECTION
-       ================================= */
-    .timeline-section {
-        background-color: #ffffff;
-        padding: 80px 20px;
-    }
-    .section-title {
+        /* This section will now grow to fill space and center the content */
+        flex-grow: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         text-align: center;
-        font-size: 2.5rem;
-        font-weight: 600;
-        margin-bottom: 50px;
-        color: #333;
+        position: relative; /* Sits on top of the ::before overlay */
+        padding: 40px 20px;
     }
-    .timeline-container {
-        position: relative;
-        max-width: 1200px;
-        margin: 0 auto;
-    }
-    .timeline-container::after {
-        content: '';
-        position: absolute;
-        width: 6px;
-        background-color: #e9ecef;
-        top: 0; bottom: 0; left: 50%;
-        margin-left: -3px;
-    }
-    .timeline-item {
-        padding: 10px 40px;
-        position: relative;
-        width: 50%;
-    }
-    .timeline-item::after {
-        content: '';
-        position: absolute;
-        width: 25px; height: 25px;
-        right: -17px;
-        background-color: white;
-        border: 4px solid #007BFF;
-        top: 15px;
-        border-radius: 50%;
-        z-index: 1;
-    }
-    .left { left: 0; }
-    .right { left: 50%; }
-    .right::after { left: -16px; }
-    .timeline-content {
-        padding: 20px 30px;
-        background-color: #f8f9fa;
-        position: relative;
-        border-radius: 8px;
-        border: 1px solid #e9ecef;
-    }
-    .timeline-content h3 { font-size: 1.5rem; margin-bottom: 10px; color: #333; }
-    .timeline-content p { color: #6c757d; }
 
-    /* Responsive styles for the timeline */
-    @media screen and (max-width: 768px) {
-        .timeline-container::after { left: 31px; }
-        .timeline-item { width: 100%; padding-left: 70px; padding-right: 25px; }
-        .left, .right { left: 0%; }
-        .left::after, .right::after { left: 15px; }
-
-        .hero-section { background-position: 70% center; min-height: 80vh; }
-        .hero-section h1 { font-size: 2.5rem; }
-        .hero-section p { font-size: 1.1rem; }
+    .footer-placeholder {
+        /* This is a simple fix to prevent the footer from base.html from appearing on this page */
+        display: none !important;
     }
 </style>
 {% endblock %}
 
 
 {% block content %}
+<div class="homepage-wrapper">
 
-<!-- HERO SECTION (Using Bootstrap Grid) -->
-<div class="hero-section d-flex align-items-center">
-    <div class="container col-xxl-8 px-4 py-5 hero-content">
-        <div class="row align-items-center g-5 py-5">
-            <div class="col-lg-6 text-start">
-                <h1 class="display-4 fw-bold lh-1 mb-3">Unlock Your Career Potential</h1>
-                <p class="lead">
-                    Get your career readiness score.
+    <!-- HERO CONTENT -->
+    <div class="container hero-content">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <h1 class="display-3 fw-bold">Optimize Your Path to Success</h1>
+                <p class="lead mt-3 mb-4" style="color: #e0e0e0;">
+                    Analyze your skills, get your PrepScore, and receive clear, actionable feedback to stand out to employers.
                 </p>
-                <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-                    {% if user.is_authenticated %}
-                        <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg px-4 me-md-2">Go to Dashboard</a>
-                    {% else %}
-                        <a href="{% url 'register' %}" class="btn btn-primary btn-lg px-4 me-md-2">Create Your Profile</a>
-                    {% endif %}
-                </div>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg fw-bold">Go to Your Dashboard</a>
+                {% else %}
+                    <a href="{% url 'register' %}" class="btn btn-primary btn-lg fw-bold">Create Your Free Profile</a>
+                {% endif %}
             </div>
         </div>
     </div>
+
 </div>
+{% endblock %}
 
-<!-- NEW "HOW IT WORKS" TIMELINE -->
-<section class="timeline-section">
-    <h2 class="section-title">How It Works</h2>
-    <div class="timeline-container">
-
-        <!-- Step 1 -->
-        <div class="timeline-item left">
-            <div class="timeline-content">
-                <h3>1. Build Your Profile</h3>
-                <p>Easily add your academic qualifications, technical skills, certifications, and work experience in one place.</p>
-            </div>
-        </div>
-
-        <!-- Step 2 -->
-        <div class="timeline-item right">
-            <div class="timeline-content">
-                <h3>2. Get Your PrepScore</h3>
-                <p>Our smart algorithm analyzes your data to generate your unique Career Readiness Score.</p>
-            </div>
-        </div>
-
-        <!-- Step 3 -->
-        <div class="timeline-item left">
-            <div class="timeline-content">
-                <h3>3. Receive Actionable Feedback</h3>
-                <p>Get personalized suggestions on what skills to learn, projects to build, and certifications to earn.</p>
-            </div>
-        </div>
-
-    </div>
-</section>
-
+{% block footer %}
+    <!-- By overriding the footer block and leaving it empty, we remove the footer for this page only -->
 {% endblock %}
