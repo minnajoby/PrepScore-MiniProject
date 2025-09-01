@@ -1,0 +1,67 @@
+{% extends 'profiles/dashboard_base.html' %}
+{% load static %}
+
+{% block title %}Manage Education{% endblock %}
+
+{% block dashboard_content %}
+
+<!-- === THIS IS THE MISSING CARD WRAPPER === -->
+<div class="card shadow-sm border-0 rounded-4 h-100">
+
+    <!-- Page Header -->
+    <div class="card-header bg-light border-bottom p-4">
+        <h2 class="h3 mb-0">Manage Your Education</h2>
+        <p class="text-muted mb-0 mt-1">Add, edit, or delete your academic qualifications.</p>
+    </div>
+    
+    <div class="card-body p-4">
+        <div class="row g-5">
+            <!-- LEFT COLUMN: ADD NEW EDUCATION FORM -->
+            <div class="col-lg-5">
+                <h4 class="mb-3 fw-bold">Add New Qualification</h4>
+                <form method="post" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-sm-4"><label for="{{ form.degree.id_for_label }}" class="col-form-label fw-bold">Degree</label></div>
+                        <div class="col-sm-8">{{ form.degree }}</div>
+                    </div>
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-sm-4"><label for="{{ form.institution.id_for_label }}" class="col-form-label fw-bold">Institution</label></div>
+                        <div class="col-sm-8">{{ form.institution }}</div>
+                    </div>
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-sm-4"><label for="{{ form.year_of_completion.id_for_label }}" class="col-form-label fw-bold">Year</label></div>
+                        <div class="col-sm-8">{{ form.year_of_completion }}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-8 offset-sm-4"><button type="submit" class="btn btn-primary fw-bold">Save</button></div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- RIGHT COLUMN: LIST OF EXISTING EDUCATION -->
+            <div class="col-lg-7">
+                <h4 class="mb-3 fw-bold">Your Current Qualifications</h4>
+                <div class="list-group">
+                    {% for edu in educations %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>{{ edu.degree }}</strong>
+                                <small class="text-muted d-block">{{ edu.institution }} - {{ edu.year_of_completion }}</small>
+                            </div>
+                            <div>
+                                <a href="{% url 'edit_education' pk=edu.pk %}" class="btn btn-sm btn-outline-primary">Edit</a>
+                                <a href="{% url 'delete_education' pk=edu.pk %}" class="btn btn-sm btn-outline-danger ms-1">Delete</a>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="list-group-item text-muted">You haven't added any education history yet.</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- === END OF CARD WRAPPER === -->
+
+{% endblock %}

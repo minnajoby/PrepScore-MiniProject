@@ -1,16 +1,25 @@
-{% extends 'profiles/base.html' %}
+{% extends 'profiles/dashboard_base.html' %}
 
 {% block title %}Confirm Deletion{% endblock %}
 
-{% block content %}
-    <h2>Confirm Deletion</h2>
-    <hr>
-    <p>Are you sure you want to delete the {{ type }}: <strong>"{{ object }}"</strong>?</p>
-    <p>This action cannot be undone.</p>
+{% block dashboard_content %}
+<div class="card bg-dark text-white shadow-lg border-secondary rounded-4">
+    <div class="card-body p-4 p-md-5 text-center">
+        
+        <i class="bi bi-exclamation-triangle-fill display-1 text-danger mb-3"></i>
+        
+        <h2 class="h3 fw-bold">Confirm Deletion</h2>
+        
+        <p class="lead text-white-50">
+            Are you sure you want to delete the {{ type }}: <br><strong>"{{ object }}"</strong>?
+        </p>
+        <p class="text-danger">This action cannot be undone.</p>
 
-    <form method="post">
-        {% csrf_token %}
-        <button type="submit" style="background-color: rgb(14, 10, 70); color: white;">Confirm Delete</button>
-        <a href="{% url 'dashboard' %}" style="margin-left: 10px;">Cancel</a>
-    </form>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-lg fw-bold">Confirm Delete</button>
+            <a href="{{ request.META.HTTP_REFERER|default:'dashboard' }}" class="btn btn-secondary btn-lg fw-bold ms-2">Cancel</a>
+        </form>
+    </div>
+</div>
 {% endblock %}

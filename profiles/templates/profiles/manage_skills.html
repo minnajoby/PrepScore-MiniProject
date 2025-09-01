@@ -1,0 +1,60 @@
+{% extends 'profiles/dashboard_base.html' %}
+{% load static %}
+
+{% block title %}Manage Skills{% endblock %}
+
+{% block dashboard_content %}
+<div class="card shadow-sm border-0 rounded-4 h-100">
+
+    <!-- 1. PAGE HEADER -->
+    <div class="card-header bg-light border-bottom p-4">
+        <h2 class="h3 mb-0">Manage Your Skills</h2>
+        <p class="text-muted mb-0 mt-1">Add, edit, or delete your technical and soft skills.</p>
+    </div>
+    
+    <div class="card-body p-4">
+        <div class="row g-5">
+            <!-- LEFT COLUMN: ADD NEW SKILL FORM -->
+            <div class="col-lg-5">
+                <h4 class="mb-3 fw-bold">Add New Skill</h4>
+                
+                <form method="post" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    
+                    <!-- Horizontal form layout for perfect alignment -->
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-sm-4">
+                            <label for="{{ form.name.id_for_label }}" class="col-form-label fw-bold">Skill Name</label>
+                        </div>
+                        <div class="col-sm-8">
+                            {{ form.name }}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-8 offset-sm-4">
+                            <button type="submit" class="btn btn-primary fw-bold">Save New Skill</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- RIGHT COLUMN: LIST OF EXISTING SKILLS -->
+            <div class="col-lg-7">
+                <h4 class="mb-3 fw-bold">Your Current Skills</h4>
+                <div class="p-3 border rounded">
+                    {% for skill in skills %}
+                        <div class="badge bg-primary me-1 fs-6 p-2 mb-1">
+                            {{ skill.name }}
+                            <a href="{% url 'edit_skill' pk=skill.pk %}" class="text-white text-decoration-none ms-2" title="Edit Skill"><i class="bi bi-pencil-square"></i></a>
+                            <a href="{% url 'delete_skill' pk=skill.pk %}" class="text-white text-decoration-none ms-1" title="Delete Skill"><i class="bi bi-trash"></i></a>
+                        </div>
+                    {% empty %}
+                        <p class="text-muted mb-0">You haven't added any skills yet.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

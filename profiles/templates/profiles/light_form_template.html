@@ -1,0 +1,31 @@
+{% extends 'profiles/dashboard_base.html' %}
+{% load static %}
+
+{% block title %}{{ form_title }}{% endblock %}
+
+{% block dashboard_content %}
+<!-- This is a standard Bootstrap card, which is white by default -->
+<div class="card shadow-sm border-0 rounded-4 h-100">
+    <div class="card-header bg-light border-bottom p-4">
+        <h2 class="h3 mb-0">{{ form_title }}</h2>
+        {% if form_subtitle %}
+            <p class="text-muted mb-0 mt-1">{{ form_subtitle }}</p>
+        {% endif %}
+    </div>
+    <div class="card-body p-4">
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="mb-3">
+                    <label for="{{ field.id_for_label }}" class="form-label fw-bold">{{ field.label }}</label>
+                    {{ field }}
+                    {% for error in field.errors %}
+                        <div class="text-danger small mt-1">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary fw-bold px-4 mt-3">{{ submit_button_text }}</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

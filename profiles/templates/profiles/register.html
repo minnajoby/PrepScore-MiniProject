@@ -1,76 +1,111 @@
 {% extends 'profiles/base.html' %}
 {% load static %}
 
-{% block title %}Register - PrepScore{% endblock %}
+{% block title %}Create Your Account - PrepScore{% endblock %}
 
 {% block extra_head %}
 <style>
-    main { padding: 0 !important; }
+    /* --- DARK THEME STYLES FOR THE REGISTER PAGE --- */
 
-    .register-page-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: calc(100vh - 70px);
-        padding: 40px 20px;
-
-        /* Use the same background as the homepage hero */
-        background-image: url("{% static 'images/homepage-image.png' %}");
-        background-size: cover;
-        background-position: center;
+    body {
+        /* A deep, rich dark blue background */
+        background-color: #0d1b2a !important;
+        background-image: radial-gradient(circle, #1b263b, #0d1b2a 80%);
+        background-attachment: fixed;
     }
 
+    .register-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: calc(100vh - 73px);
+        /* Full height minus the header */
+        padding: 40px 0;
+    }
+
+    /* The white card for the form */
     .register-card {
-        background-color: rgba(255, 255, 255, 0.95); /* A mostly opaque white card */
-        padding: 40px;
-        border-radius: 12px;
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
         width: 100%;
-        max-width: 500px; /* Slightly wider for more fields */
+        max-width: 450px;
+        background-color: #ffffff;
+        color: #212529;
+        border-radius: 1rem;
+        border: none;
+    }
+
+    .register-card a {
+        color: #007BFF;
+        text-decoration: none;
+    }
+
+    .register-card a:hover {
+        text-decoration: underline;
     }
 </style>
 {% endblock %}
 
-{% block content %}
-<div class="register-page-container">
-    <div class="register-card">
-        <div class="text-center mb-4">
-            <h2 class="fw-bold">Create Your Account</h2>
-            <p class="text-muted">Join PrepScore and start optimizing your career profile today.</p>
-        </div>
 
-        <!-- Display any error messages from the view -->
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-danger" role="alert">
+{% block content %}
+<div class="container register-wrapper">
+    <div class="col-lg-4 col-md-7 col-sm-10">
+        <div class="card shadow-lg border-0 register-card">
+            <div class="card-body p-4 p-md-5">
+
+                <h2 class="card-title text-center fw-bold mb-4 fs-1">Create Account</h2>
+                {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-danger" role="alert"> <!-- Use alert-danger for errors -->
                     {{ message }}
                 </div>
-            {% endfor %}
-        {% endif %}
+                {% endfor %}
+                {% endif %}
 
-        <form method="post">
-            {% csrf_token %}
-            <div class="mb-3">
-                <label for="username" class="form-label fw-bold">Username</label>
-                <input type="text" class="form-control form-control-lg" id="username" name="username" required>
-            </div>
-            <div class="mb-3">
-                <label for="email" class="form-label fw-bold">Email</label>
-                <input type="email" class="form-control form-control-lg" id="email" name="email" required>
-            </div>
-            <div class="mb-3">
-                <label for="password" class="form-label fw-bold">Password</label>
-                <input type="password" class="form-control form-control-lg" id="password" name="password" required>
-            </div>
-            
-            <div class="d-grid mt-4">
-                <button type="submit" class="btn btn-primary btn-lg fw-bold">Register</button>
-            </div>
-        </form>
+                <form method="post">
+                    {% csrf_token %}
 
-        <p class="text-center mt-4">
-            Already have an account? <a href="{% url 'login' %}" class="text-primary fw-bold text-decoration-none">Sign in</a>.
-        </p>
+                    <!-- Display any non-field errors (like 'passwords do not match') at the top -->
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {% for error in form.non_field_errors %}
+                        {{ error }}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <!-- Username Field -->
+                    <div class="mb-3">
+                        <input type="text" class="form-control" name="username" placeholder="Username" required>
+                    </div>
+
+                    <!-- Email Field -->
+                    <div class="mb-3">
+                        <input type="email" class="form-control" name="email" placeholder="Email" required>
+                    </div>
+
+                    <!-- Password Field -->
+                    <div class="mb-3">
+                        <input type="password" class="form-control" name="password1" placeholder="Password" required>
+                    </div>
+
+                    <!-- Password Confirmation Field -->
+                    <div class="mb-3">
+                        <input type="password" class="form-control" name="password2" placeholder="Password confirmation"
+                            required>
+                    </div>
+
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg fw-bold">Register</button>
+                    </div>
+                </form>
+
+                <hr class="my-4">
+
+                <p class="text-center text-muted">
+                    Already have an account? <a href="{% url 'login' %}" class="fw-bold">Sign in here.</a>
+                </p>
+
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

@@ -1,0 +1,84 @@
+{% extends 'profiles/dashboard_base.html' %}
+{% load static %}
+
+{% block title %}Manage Work Experience{% endblock %}
+
+{% block dashboard_content %}
+<div class="card shadow-lg border-0 rounded-4">
+
+    <!-- Page Header -->
+    <div class="card-header bg-light border-bottom px-4 pt-4">
+        <h2 class="h3 mb-0">Manage Your Work Experience</h2>
+        <p class="text-muted mb-0 mt-1">Add, edit, or delete your internships and job roles.</p>
+    </div>
+    
+    <div class="card-body p-4">
+        <div class="row g-5">
+            <!-- LEFT COLUMN: ADD NEW EXPERIENCE FORM -->
+            <div class="col-lg-5">
+                <h4 class="mb-3 fw-bold">Add New Experience</h4>
+                
+                <form method="post" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    
+                    <!-- Horizontal form layout for perfect alignment -->
+                    
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-sm-3">
+                            <label for="{{ form.title.id_for_label }}" class="col-form-label fw-bold">Title</label>
+                        </div>
+                        <div class="col-sm-9">
+                            {{ form.title }}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-sm-3">
+                            <label for="{{ form.company.id_for_label }}" class="col-form-label fw-bold">Company</label>
+                        </div>
+                        <div class="col-sm-9">
+                            {{ form.company }}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-sm-3">
+                            <label for="{{ form.description.id_for_label }}" class="col-form-label fw-bold pt-0">Description</label>
+                        </div>
+                        <div class="col-sm-9">
+                            {{ form.description }}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-9 offset-sm-3">
+                            <button type="submit" class="btn btn-primary fw-bold">Save New Experience</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- RIGHT COLUMN: LIST OF EXISTING EXPERIENCE -->
+            <div class="col-lg-7">
+                <h4 class="mb-3 fw-bold">Your Current Experience</h4>
+                <div class="list-group">
+                    {% for exp in experiences %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>{{ exp.title }}</strong>
+                                <small class="text-muted d-block">{{ exp.company }}</small>
+                            </div>
+                            <div>
+                                <a href="{% url 'edit_experience' pk=exp.pk %}" class="btn btn-sm btn-outline-primary">Edit</a>
+                                <a href="{% url 'delete_experience' pk=exp.pk %}" class="btn btn-sm btn-outline-danger ms-1">Delete</a>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="list-group-item text-muted">You haven't added any work experience yet.</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

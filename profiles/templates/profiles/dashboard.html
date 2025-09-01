@@ -1,119 +1,128 @@
-{% extends 'profiles/base.html' %}
-
+{% extends 'profiles/dashboard_base.html' %}
+{% load static %}
 {% block title %}Your Dashboard{% endblock %}
 
-{% block extra_head %}
-<style>
-    .add-button {
-        display: inline-block;
-        margin-top: 15px;
-        /* Added more space */
-        padding: 8px 15px;
-        background-color: rgb(13, 23, 71);
-        color: white;
-        text-decoration: none;
-        border-radius: 5px;
-        font-weight: 600;
-    }
+{% block dashboard_content %}
+<!-- This is the single, main WHITE card for the entire page -->
+<div class="card shadow-sm border-0 rounded-4 h-100">
+    <div class="card-body p-4 p-md-5">
 
-    .add-button:hover {
-        background-color: rgb(8, 8, 59);
-    }
+        <!-- 1. HEADER & SCORE -->
+        <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
+            <div class="d-flex align-items-center">
+                <img src="{% static user.profile.profile_picture %}" class="rounded-circle me-3" style="width: 60px; height: 60px; object-fit: cover;" alt="Profile Picture">
+                <div>
+                    <h2 class="h4 mb-0 fw-bold">Welcome, {{ user.username }}!</h2>
+                    <p class="text-muted mb-0 small">{{ user.profile.headline|default:"No headline provided." }}</p>
+                </div>
+            </div>
+            <div class="text-center">
+                <h5 class="text-muted small mb-0">Your PrepScore</h5>
+                <p class="display-4 fw-bold text-primary mb-0">{{ score|default:0 }}</p>
+            </div>
+        </div>
 
-    .profile-section {
-        background-color: #fff;
-        padding: 20px;
-        margin-top: 20px;
-        /* Added space between sections */
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
+        <!-- 2. PROFILE SUMMARY (Stat Cards) - RESPONSIVE -->
+        <div class="row g-3 text-center mb-4">
+            <div class="col-6 col-lg-3"><div class="p-3 border rounded bg-light"><h4 class="fw-bold mb-0">{{ skills.count }}</h4><small class="text-muted">Skills</small></div></div>
+            <div class="col-6 col-lg-3"><div class="p-3 border rounded bg-light"><h4 class="fw-bold mb-0">{{ educations.count }}</h4><small class="text-muted">Education</small></div></div>
+            <div class="col-6 col-lg-3"><div class="p-3 border rounded bg-light"><h4 class="fw-bold mb-0">{{ experiences.count }}</h4><small class="text-muted">Experience</small></div></div>
+            <div class="col-6 col-lg-3"><div class="p-3 border rounded bg-light"><h4 class="fw-bold mb-0">{{ certifications.count }}</h4><small class="text-muted">Certs</small></div></div>
+        </div>
 
-    .profile-section ul {
-        list-style: none;
-        padding-left: 0;
-    }
+        <!-- SEPARATOR -->
+        <hr class="my-4">
 
-    .profile-section li {
-        padding: 8px 0;
-        border-bottom: 1px solid #eee;
-    }
-</style>
-{% endblock %}
+        <!-- 3. PROFILE DETAILS -->
+        
+        <!-- Skills Section -->
+        <div class="mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="fw-bold mb-0">Skills</h5>
+                <a href="{% url 'manage_skills' %}" class="btn btn-sm btn-success">+ Add New</a>
+            </div>
+            <div class="p-3 border rounded bg-light">
+                {% for skill in skills %}
+                    <span class="badge bg-dark me-1 fs-6 p-2 mb-1">{{ skill.name }}</span>
+                {% empty %}
+                    <p class="text-muted mb-0">You haven't added any skills yet.</p>
+                {% endfor %}
+            </div>
+        </div>
 
+        <!-- Academic Qualifications Section -->
+        <div class="mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="fw-bold mb-0">Academic Qualifications</h5>
+                <a href="{% url 'manage_education' %}" class="btn btn-sm btn-success">+ Add New</a>
+            </div>
+            <ul class="list-group">
+                {% for edu in educations %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>{{ edu.degree }}</strong>
+                            <small class="text-muted d-block">{{ edu.institution }} - {{ edu.year_of_completion }}</small>
+                        </div>
+                        <div>
+                            <a href="{% url 'edit_education' pk=edu.pk %}" class="btn btn-sm btn-outline-primary">Edit</a>
+                            <a href="{% url 'delete_education' pk=edu.pk %}" class="btn btn-sm btn-outline-danger ms-1">Delete</a>
+                        </div>
+                    </li>
+                {% empty %}
+                    <li class="list-group-item text-muted">No academic qualifications added yet.</li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <!-- Work Experience Section -->
+        <div class="mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="fw-bold mb-0">Work Experience</h5>
+                <a href="{% url 'manage_experience' %}" class="btn btn-sm btn-success">+ Add New</a>
+            </div>
+            <ul class="list-group">
+                {% for exp in experiences %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>{{ exp.title }}</strong>
+                            <small class="text-muted d-block">{{ exp.company }}</small>
+                        </div>
+                        <div>
+                            <a href="{% url 'edit_experience' pk=exp.pk %}" class="btn btn-sm btn-outline-primary">Edit</a>
+                            <a href="{% url 'delete_experience' pk=exp.pk %}" class="btn btn-sm btn-outline-danger ms-1">Delete</a>
+                        </div>
+                    </li>
+                {% empty %}
+                    <li class="list-group-item text-muted">No work experience added yet.</li>
+                {% endfor %}
+            </ul>
+        </div>
 
-{% block content %}
-<h2>Welcome to your Dashboard, {{ user.username }}!</h2>
-<p>This is where you can manage all of your professional profile information.</p>
-<hr>
+        <!-- Certifications Section -->
+        <div class="mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="fw-bold mb-0">Certifications</h5>
+                <a href="{% url 'manage_certifications' %}" class="btn btn-sm btn-success">+ Add New</a>
+            </div>
+            <ul class="list-group">
+                {% for cert in certifications %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>{{ cert.name }}</strong>
+                            <small class="text-muted d-block">{{ cert.issuing_organization }} - Issued: {{ cert.date_issued|date:"M Y" }}</small>
+                        </div>
+                        <div>
+                            <!-- You will need to create the edit/delete URLs for certifications -->
+                            <a href="#" class="btn btn-sm btn-outline-primary">Edit</a>
+                            <a href="#" class="btn btn-sm btn-outline-danger ms-1">Delete</a>
+                        </div>
+                    </li>
+                {% empty %}
+                    <li class="list-group-item text-muted">No certifications added yet.</li>
+                {% endfor %}
+            </ul>
+        </div>
 
-<!-- Section for Skills -->
-<section class="profile-section">
-    <h3>Your Skills</h3>
-
-    {% if skills %}
-    <ul>
-        {% for skill in skills %}
-        <li>
-            {{ skill.name }}
-            <a href="{% url 'edit_skill' pk=skill.pk %}"
-                style="margin-left: 10px; font-size: 0.8em; color: #007BFF;">Edit</a>
-            <a href="{% url 'delete_skill' pk=skill.pk %}" style="margin-left: 5px; font-size: 0.8em; color: rgb(20, 14, 75);">Delete</a>
-        </li>
-        {% endfor %}
-    </ul>
-    {% else %}
-    <p>You haven't added any skills yet.</p>
-    {% endif %}
-
-    <a href="{% url 'add_skill' %}" class="add-button">Add New Skill</a>
-</section>
-
-<!-- Section for Education -->
-<section class="profile-section">
-    <h3>Your Education</h3>
-
-    {% if educations %}
-    <ul>
-        {% for edu in educations %}
-        <li>
-            <strong>{{ edu.degree }}</strong> from {{ edu.institution }}
-            (Completed: {{ edu.year_of_completion }})
-            <!-- === ADD THIS EDIT LINK === -->
-            <a href="{% url 'edit_education' pk=edu.pk %}"
-                style="margin-left: 10px; font-size: 0.8em; color: #007BFF;">Edit</a>
-            <a href="{% url 'delete_education' pk=edu.pk %}" style="margin-left: 5px; font-size: 0.8em; color: rgb(7, 7, 66);">Delete</a>
-        </li>
-        {% endfor %}
-    </ul>
-    {% else %}
-    <p>You haven't added any education history yet.</p>
-    {% endif %}
-
-    <a href="{% url 'add_education' %}" class="add-button">Add New Education</a>
-</section>
-
-<!-- Section for Experience -->
-<section class="profile-section">
-    <h3>Your Experience</h3>
-
-    {% if experiences %}
-    <ul>
-        {% for exp in experiences %}
-        <li>
-            <strong>{{ exp.title }}</strong> at {{ exp.company }}
-            <!-- === ADD THIS EDIT LINK === -->
-            <a href="{% url 'edit_experience' pk=exp.pk %}"
-                style="margin-left: 10px; font-size: 0.8em; color: #007BFF;">Edit</a>
-            <a href="{% url 'delete_experience' pk=exp.pk %}" style="margin-left: 5px; font-size: 0.8em; color: rgb(15, 22, 58);">Delete</a>
-        </li>
-        {% endfor %}
-    </ul>
-    {% else %}
-    <p>You haven't added any work experience yet.</p>
-    {% endif %}
-
-    <a href="{% url 'add_experience' %}" class="add-button">Add New Experience</a>
-</section>
-
+    </div>
+</div>
 {% endblock %}

@@ -1,0 +1,77 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Dashboard{% endblock %} - PrepScore</title>
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #0d1b2a; }
+        .sidebar {
+            width: 260px;
+            background-color: #0d1b2a;
+            color: #a9d6e5;
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar .profile-header { text-align: center; padding: 1.5rem 1rem; border-bottom: 1px solid #2a3a50; }
+        .sidebar .profile-header img { width: 90px; height: 90px; object-fit: cover; border: 3px solid #1e90ff; }
+        .sidebar .profile-header h2 { font-size: 1.1rem; color: white; margin-top: 0.75rem; }
+        .sidebar .profile-header p { font-size: 0.85rem; color: #778da9; }
+        .sidebar .nav-main { flex-grow: 1; }
+        .sidebar .nav-link { color: #a9d6e5; font-weight: 500; padding: 0.75rem 1.5rem; display: flex; align-items: center; }
+        .sidebar .nav-link i { margin-right: 1rem; font-size: 1.2rem; }
+        .sidebar .nav-link.active, .sidebar .nav-link:hover { background-color: #1e90ff; color: white; }
+        
+        .main-content-area { flex-grow: 1; width: 100%; }
+        
+        .dashboard-header-mobile {
+            background-color: #ffffff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <div class="d-flex">
+        <!-- DESKTOP SIDEBAR (This is hidden on mobile screens) -->
+        <aside class="sidebar vh-100 d-none d-lg-flex sticky-top">
+            {% include 'profiles/_sidebar.html' %}
+        </aside>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="main-content-area">
+            <!-- MOBILE-ONLY HEADER with "Hamburger" Menu -->
+            <header class="dashboard-header-mobile d-lg-none d-flex justify-content-between align-items-center p-3">
+                <a class="navbar-brand fw-bold fs-4" href="{% url 'dashboard' %}">PrepScore</a>
+                <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
+                    <i class="bi bi-list"></i>
+                </button>
+            </header>
+
+            <div class="p-3">
+             {% block dashboard_content %}
+             <!-- Page specific content will go here -->
+             {% endblock %}
+            </div>
+        </main>
+    </div>
+
+    <!-- THE HIDDEN OFFCANVAS SIDEBAR FOR MOBILE -->
+    <div class="offcanvas offcanvas-start bg-dark text-white" tabindex="-1" id="mobileSidebar">
+        <div class="offcanvas-header border-bottom border-secondary">
+            <h5 class="offcanvas-title">Menu</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body">
+            <!-- We reuse the sidebar content here -->
+            {% include 'profiles/_sidebar.html' %}
+        </div>
+    </div>
+
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

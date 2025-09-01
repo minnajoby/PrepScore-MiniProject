@@ -1,0 +1,26 @@
+{% load static %}
+<div class="profile-header text-center pt-3 pb-4 border-bottom border-secondary">
+    <img src="{% static user.profile.profile_picture %}" class="rounded-circle mb-3" style="width: 90px; height: 90px; object-fit: cover; border: 3px solid #1e90ff;" alt="Profile Picture">
+    <div>
+        <h2 class="h5 text-white mb-1">{{ user.username }}</h2>
+        <p class="small text-white-50 mb-0 text-truncate">{{ user.profile.headline|default:"No headline" }}</p>
+    </div>
+</div>
+<ul class="nav flex-column pt-3 flex-grow-1">
+    <li class="nav-item"><a class="nav-link {% if request.path == '/dashboard/' %}active{% endif %}" href="{% url 'dashboard' %}"><i class="bi bi-grid-fill"></i>Dashboard</a></li>
+    <li class="nav-item"><a class="nav-link {% if request.path == '/profile/' %}active{% endif %}" href="{% url 'manage_profile' %}"><i class="bi bi-person-fill"></i>Profile</a></li>
+    <li class="nav-item"><a class="nav-link {% if request.path == '/education/' %}active{% endif %}" href="{% url 'manage_education' %}"><i class="bi bi-mortarboard-fill"></i>Education</a></li>
+    <li class="nav-item"><a class="nav-link {% if request.path == '/skills/' %}active{% endif %}" href="{% url 'manage_skills' %}"><i class="bi bi-gear-fill"></i>Skills</a></li>
+    <li class="nav-item"><a class="nav-link {% if request.path == '/experience/' %}active{% endif %}" href="{% url 'manage_experience' %}"><i class="bi bi-briefcase-fill"></i>Work Experience</a></li>
+    <li class="nav-item"><a class="nav-link {% if request.path == '/certifications/' %}active{% endif %}" href="{% url 'manage_certifications' %}"><i class="bi bi-patch-check-fill"></i>Certifications</a></li>
+</ul>
+<ul class="nav flex-column">
+    <li class="nav-item">
+        <form action="{% url 'logout' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="nav-link" style="border:none; background:none; width:100%; text-align:left;">
+                <i class="bi bi-box-arrow-right"></i>Logout
+            </button>
+        </form>
+    </li>
+</ul>

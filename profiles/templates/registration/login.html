@@ -1,0 +1,97 @@
+{% extends 'profiles/base.html' %}
+{% load static %}
+
+{% block title %}Login - PrepScore{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* --- DARK THEME STYLES (MATCHES REGISTER PAGE) --- */
+
+    body {
+        /* A deep, rich dark blue background */
+        background-color: #0d1b2a !important;
+        background-image: radial-gradient(circle, #1b263b, #0d1b2a 80%);
+        background-attachment: fixed;
+    }
+
+    .login-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: calc(100vh - 73px);
+        /* Full height minus the header */
+        padding: 40px 0;
+    }
+
+    /* The white card for the form */
+    .login-card {
+        width: 100%;
+        max-width: 450px;
+        background-color: #ffffff;
+        color: #212529;
+        border-radius: 1rem;
+        border: none;
+    }
+
+    .login-card a {
+        color: #007BFF;
+        text-decoration: none;
+    }
+
+    .login-card a:hover {
+        text-decoration: underline;
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="container login-wrapper">
+    <div class="col-lg-4 col-md-7 col-sm-10">
+        <div class="card shadow-lg border-0 login-card">
+            <div class="card-body p-4 p-md-5">
+
+                <h2 class="card-title text-center fw-bold mb-4 fs-1">Sign In</h2>
+
+                <!-- Display any login error messages -->
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <!-- Username or Email Field -->
+                    <div class="mb-3">
+                        <input type="text" name="login" class="form-control" placeholder="Username or Email" required>
+                    </div>
+
+                    <!-- Password Field -->
+                    <div class="mb-3">
+                        <input type="password" name="password" class="form-control" placeholder="Password" required>
+                    </div>
+
+                    <div classd-flex justify-content-end mb-4">
+                        <a href="{% url 'password_reset' %}">Forgot Password?</a>
+                    </div>
+
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg fw-bold">Login</button>
+                    </div>
+                </form>
+
+                <hr class="my-4">
+
+                <p class="text-center text-muted">
+                    Don't have an account? <a href="{% url 'register' %}" class="fw-bold">Sign up here.</a>
+                </p>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

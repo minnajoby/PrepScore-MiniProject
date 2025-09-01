@@ -5,7 +5,12 @@ from django.contrib.auth.models import User # Import Django's built-in User
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    profile_picture = models.CharField(max_length=255, default='images/avatar1.jpg')
     bio = models.TextField(blank=True)
+    linkedin_url = models.URLField(max_length=255, blank=True)
+    github_url = models.URLField(max_length=255, blank=True)
+    headline = models.CharField(max_length=255, blank=True)
+    location = models.CharField(max_length=255, blank=True)
     def __str__(self):
         return self.user.username
 
@@ -34,5 +39,10 @@ class Experience(models.Model):
 class Certification(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     name = models.CharField(max_length=200)
+    
+    # --- ADD THESE TWO NEW FIELDS ---
+    issuing_organization = models.CharField(max_length=200, blank=True)
+    date_issued = models.DateField(null=True, blank=True)
+
     def __str__(self):
         return self.name
