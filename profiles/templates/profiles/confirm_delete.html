@@ -1,25 +1,42 @@
 {% extends 'profiles/dashboard_base.html' %}
+{% load static %}
 
 {% block title %}Confirm Deletion{% endblock %}
 
 {% block dashboard_content %}
-<div class="card bg-dark text-white shadow-lg border-secondary rounded-4">
-    <div class="card-body p-4 p-md-5 text-center">
-        
-        <i class="bi bi-exclamation-triangle-fill display-1 text-danger mb-3"></i>
-        
-        <h2 class="h3 fw-bold">Confirm Deletion</h2>
-        
-        <p class="lead text-white-50">
-            Are you sure you want to delete the {{ type }}: <br><strong>"{{ object }}"</strong>?
-        </p>
-        <p class="text-danger">This action cannot be undone.</p>
 
+<!-- This card uses the same dark theme as your other management pages -->
+<div class="card bg-dark text-white shadow-lg border-secondary rounded-4" data-bs-theme="dark">
+    <div class="card-body p-4 p-md-5 text-center">
+
+        <!-- The icon now uses the primary blue color -->
+        <i class="bi bi-exclamation-triangle-fill display-3 text-primary mb-3"></i>
+
+        <h2 class="h3 fw-bold text-white">Are you sure?</h2>
+
+        <p class="lead text-white-50">
+            You are about to permanently delete the {{ type }}:
+        </p>
+
+        <!-- Display the object name in a subtle dark alert box -->
+        <div class="alert alert-dark border-secondary">
+            <strong>"{{ object }}"</strong>
+        </div>
+
+        <!-- The warning text now uses a lighter blue for emphasis -->
+        <p class="text-info mt-3">This action cannot be undone.</p>
+        
         <form method="post">
             {% csrf_token %}
-            <button type="submit" class="btn btn-danger btn-lg fw-bold">Confirm Delete</button>
-            <a href="{{ request.META.HTTP_REFERER|default:'dashboard' }}" class="btn btn-secondary btn-lg fw-bold ms-2">Cancel</a>
+            <div class="d-flex justify-content-center mt-4">
+                <!-- The "Cancel" button, neutral gray -->
+                <a href="{{ request.META.HTTP_REFERER|default:_('dashboard') }}" class="btn btn-secondary fw-bold px-4 me-2">Cancel</a>
+
+                <!-- The "Confirm Delete" button is now your primary blue color -->
+                <button type="submit" class="btn btn-primary fw-bold px-4">Yes, Delete It</button>
+            </div>
         </form>
+
     </div>
 </div>
 {% endblock %}

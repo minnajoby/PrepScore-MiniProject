@@ -22,5 +22,7 @@ urlpatterns = [
     path('skills/', views.manage_skills_view, name='manage_skills'),
     path('experience/', views.manage_experience_view, name='manage_experience'),
     path('certifications/', views.manage_certifications_view, name='manage_certifications'),
+    path('certification/<int:pk>/edit/', views.edit_certification_view, name='edit_certification'),
+    path('certification/<int:pk>/delete/', views.delete_certification_view, name='delete_certification'),
 
 ]

@@ -69,8 +69,8 @@
                                 <small class="text-muted d-block">{{ cert.issuing_organization }} - Issued: {{ cert.date_issued|date:"M Y" }}</small>
                             </div>
                             <div>
-                                <a href="#" class="btn btn-sm btn-outline-primary">Edit</a> <!-- Placeholder for edit URL -->
-                                <a href="#" class="btn btn-sm btn-outline-danger ms-1">Delete</a> <!-- Placeholder for delete URL -->
+                                <a href="{% url 'edit_certification' pk=cert.pk %}" class="btn btn-sm btn-outline-primary">Edit</a>
+        <a href="{% url 'delete_certification' pk=cert.pk %}" class="btn btn-sm btn-outline-danger ms-1">Delete</a>
                             </div>
                         </div>
                     {% empty %}

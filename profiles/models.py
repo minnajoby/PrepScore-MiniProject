@@ -39,8 +39,6 @@ class Experience(models.Model):
 class Certification(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     name = models.CharField(max_length=200)
-    
-    # --- ADD THESE TWO NEW FIELDS ---
     issuing_organization = models.CharField(max_length=200, blank=True)
     date_issued = models.DateField(null=True, blank=True)
 

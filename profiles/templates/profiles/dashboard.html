@@ -10,7 +10,8 @@
         <!-- 1. HEADER & SCORE -->
         <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
             <div class="d-flex align-items-center">
-                <img src="{% static user.profile.profile_picture %}" class="rounded-circle me-3" style="width: 60px; height: 60px; object-fit: cover;" alt="Profile Picture">
+                <img src="{% static user.profile.profile_picture %}" class="rounded-circle me-3"
+                    style="width: 60px; height: 60px; object-fit: cover;" alt="Profile Picture">
                 <div>
                     <h2 class="h4 mb-0 fw-bold">Welcome, {{ user.username }}!</h2>
                     <p class="text-muted mb-0 small">{{ user.profile.headline|default:"No headline provided." }}</p>
@@ -24,17 +25,52 @@
 
         <!-- 2. PROFILE SUMMARY (Stat Cards) - RESPONSIVE -->
         <div class="row g-3 text-center mb-4">
-            <div class="col-6 col-lg-3"><div class="p-3 border rounded bg-light"><h4 class="fw-bold mb-0">{{ skills.count }}</h4><small class="text-muted">Skills</small></div></div>
-            <div class="col-6 col-lg-3"><div class="p-3 border rounded bg-light"><h4 class="fw-bold mb-0">{{ educations.count }}</h4><small class="text-muted">Education</small></div></div>
-            <div class="col-6 col-lg-3"><div class="p-3 border rounded bg-light"><h4 class="fw-bold mb-0">{{ experiences.count }}</h4><small class="text-muted">Experience</small></div></div>
-            <div class="col-6 col-lg-3"><div class="p-3 border rounded bg-light"><h4 class="fw-bold mb-0">{{ certifications.count }}</h4><small class="text-muted">Certs</small></div></div>
+            <div class="col-6 col-lg-3">
+                <div class="p-3 border rounded bg-light">
+                    <h4 class="fw-bold mb-0">{{ skills.count }}</h4><small class="text-muted">Skills</small>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="p-3 border rounded bg-light">
+                    <h4 class="fw-bold mb-0">{{ educations.count }}</h4><small class="text-muted">Education</small>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="p-3 border rounded bg-light">
+                    <h4 class="fw-bold mb-0">{{ experiences.count }}</h4><small class="text-muted">Experience</small>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="p-3 border rounded bg-light">
+                    <h4 class="fw-bold mb-0">{{ certifications.count }}</h4><small class="text-muted">Certs</small>
+                </div>
+            </div>
+        </div>
+         <!-- === ADD THIS NEW RECOMMENDATIONS CARD === -->
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-light d-flex align-items-center">
+                    <i class="bi bi-lightbulb-fill me-2 text-primary"></i>
+                    <h5 class="mb-0 fw-bold">Recommendations</h5>
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for suggestion in suggestions %}
+                    <li class="list-group-item">
+                        {{ suggestion }}
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item text-muted">No recommendations at this time. Your profile looks great!
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
         </div>
 
         <!-- SEPARATOR -->
         <hr class="my-4">
 
         <!-- 3. PROFILE DETAILS -->
-        
+
         <!-- Skills Section -->
         <div class="mb-4">
             <div class="d-flex justify-content-between align-items-center mb-2">
@@ -43,9 +79,9 @@
             </div>
             <div class="p-3 border rounded bg-light">
                 {% for skill in skills %}
-                    <span class="badge bg-dark me-1 fs-6 p-2 mb-1">{{ skill.name }}</span>
+                <span class="badge bg-dark me-1 fs-6 p-2 mb-1">{{ skill.name }}</span>
                 {% empty %}
-                    <p class="text-muted mb-0">You haven't added any skills yet.</p>
+                <p class="text-muted mb-0">You haven't added any skills yet.</p>
                 {% endfor %}
             </div>
         </div>
@@ -58,22 +94,23 @@
             </div>
             <ul class="list-group">
                 {% for edu in educations %}
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <div>
-                            <strong>{{ edu.degree }}</strong>
-                            <small class="text-muted d-block">{{ edu.institution }} - {{ edu.year_of_completion }}</small>
-                        </div>
-                        <div>
-                            <a href="{% url 'edit_education' pk=edu.pk %}" class="btn btn-sm btn-outline-primary">Edit</a>
-                            <a href="{% url 'delete_education' pk=edu.pk %}" class="btn btn-sm btn-outline-danger ms-1">Delete</a>
-                        </div>
-                    </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>{{ edu.degree }}</strong>
+                        <small class="text-muted d-block">{{ edu.institution }} - {{ edu.year_of_completion }}</small>
+                    </div>
+                    <div>
+                        <a href="{% url 'edit_education' pk=edu.pk %}" class="btn btn-sm btn-outline-primary">Edit</a>
+                        <a href="{% url 'delete_education' pk=edu.pk %}"
+                            class="btn btn-sm btn-outline-danger ms-1">Delete</a>
+                    </div>
+                </li>
                 {% empty %}
-                    <li class="list-group-item text-muted">No academic qualifications added yet.</li>
+                <li class="list-group-item text-muted">No academic qualifications added yet.</li>
                 {% endfor %}
             </ul>
         </div>
-        
+
         <!-- Work Experience Section -->
         <div class="mb-4">
             <div class="d-flex justify-content-between align-items-center mb-2">
@@ -82,18 +119,19 @@
             </div>
             <ul class="list-group">
                 {% for exp in experiences %}
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <div>
-                            <strong>{{ exp.title }}</strong>
-                            <small class="text-muted d-block">{{ exp.company }}</small>
-                        </div>
-                        <div>
-                            <a href="{% url 'edit_experience' pk=exp.pk %}" class="btn btn-sm btn-outline-primary">Edit</a>
-                            <a href="{% url 'delete_experience' pk=exp.pk %}" class="btn btn-sm btn-outline-danger ms-1">Delete</a>
-                        </div>
-                    </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>{{ exp.title }}</strong>
+                        <small class="text-muted d-block">{{ exp.company }}</small>
+                    </div>
+                    <div>
+                        <a href="{% url 'edit_experience' pk=exp.pk %}" class="btn btn-sm btn-outline-primary">Edit</a>
+                        <a href="{% url 'delete_experience' pk=exp.pk %}"
+                            class="btn btn-sm btn-outline-danger ms-1">Delete</a>
+                    </div>
+                </li>
                 {% empty %}
-                    <li class="list-group-item text-muted">No work experience added yet.</li>
+                <li class="list-group-item text-muted">No work experience added yet.</li>
                 {% endfor %}
             </ul>
         </div>
@@ -106,19 +144,19 @@
             </div>
             <ul class="list-group">
                 {% for cert in certifications %}
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <div>
-                            <strong>{{ cert.name }}</strong>
-                            <small class="text-muted d-block">{{ cert.issuing_organization }} - Issued: {{ cert.date_issued|date:"M Y" }}</small>
-                        </div>
-                        <div>
-                            <!-- You will need to create the edit/delete URLs for certifications -->
-                            <a href="#" class="btn btn-sm btn-outline-primary">Edit</a>
-                            <a href="#" class="btn btn-sm btn-outline-danger ms-1">Delete</a>
-                        </div>
-                    </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>{{ cert.name }}</strong>
+                        <small class="text-muted d-block">{{ cert.issuing_organization }} - Issued: {{cert.date_issued|date:"M Y" }}</small>
+                    </div>
+                    <div>
+                        <!-- You will need to create the edit/delete URLs for certifications -->
+                        <a href="#" class="btn btn-sm btn-outline-primary">Edit</a>
+                        <a href="#" class="btn btn-sm btn-outline-danger ms-1">Delete</a>
+                    </div>
+                </li>
                 {% empty %}
-                    <li class="list-group-item text-muted">No certifications added yet.</li>
+                <li class="list-group-item text-muted">No certifications added yet.</li>
                 {% endfor %}
             </ul>
         </div>

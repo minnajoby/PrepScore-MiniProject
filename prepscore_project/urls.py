@@ -14,20 +14,13 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-# In prepscore_project/urls.py
 
 from django.contrib import admin
 from django.urls import path, include
-
-# --- REMOVED the import for CustomSetPasswordForm ---
 from django.contrib.auth import views as auth_views
-# --- We don't need the custom view anymore either ---
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    
-    # We can now rely on the default view, which will find our beautiful template
     path('accounts/', include('django.contrib.auth.urls')),
-    
     path('', include('profiles.urls')),
 ]

@@ -10,7 +10,7 @@ from .forms import ProfileForm,SkillForm, EducationForm, ExperienceForm,LoginFor
 from django.contrib.auth.views import PasswordResetConfirmView
 from django.urls import reverse_lazy
 from .forms import CustomUserCreationForm 
-from .scorer import calculate_prep_score # Add this import
+from .scorer import calculate_prep_score, get_suggestions # Add this import
 
 # --- VIEWS ---
 
@@ -83,13 +83,14 @@ def dashboard_view(request):
 
     # Calculate the score
     score = calculate_prep_score(profile)
-
+    suggestions = get_suggestions(profile, score)
     context = {
         'skills': skills,
         'educations': educations,
         'experiences': experiences,
         'certifications': certifications,
-        'score': score, # Pass the score to the template
+        'score': score, 
+        'suggestions': suggestions,
     }
     return render(request, 'profiles/dashboard.html', context)
 
@@ -346,3 +347,37 @@ def manage_certifications_view(request):
     certifications = Certification.objects.filter(profile=profile)
     context = {'form': form, 'certifications': certifications}
     return render(request, 'profiles/manage_certifications.html', context)
+
+@login_required
+def edit_certification_view(request, pk):
+    # Get the specific certification, ensuring it belongs to the logged-in user for security
+    certification = get_object_or_404(Certification, pk=pk, profile__user=request.user)
+
+    if request.method == 'POST':
+        form = CertificationForm(request.POST, instance=certification)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Certification successfully updated!")
+            return redirect('manage_certifications') # Redirect back to the main management page
+    else:
+        # For a GET request, create the form pre-populated with the certification's data
+        form = CertificationForm(instance=certification)
+
+    context = {
+        'form': form,
+        'form_title': 'Edit Certification',
+        'submit_button_text': 'Update Certification'
+    }
+    # We can reuse our generic form template!
+    return render(request, 'profiles/light_form_template.html', context)
+
+@login_required
+def delete_certification_view(request, pk):
+    certification = get_object_or_404(Certification, pk=pk, profile__user=request.user)
+    if request.method == 'POST':
+        certification.delete()
+        messages.info(request, "Certification has been deleted.")
+        return redirect('manage_certifications')
+    
+    # We can reuse the generic delete confirmation template
+    return render(request, 'profiles/confirm_delete.html', {'object': certification, 'type': 'Certification'})

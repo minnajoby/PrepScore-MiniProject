@@ -1,17 +1,12 @@
-# In prepscore_project/settings.py
-
 import os
 from pathlib import Path  # Make sure pathlib is imported
 from dotenv import load_dotenv
 
-# --- CORRECT BASE_DIR AND .ENV PATH ---
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Load the .env file from the root of the project
 load_dotenv(os.path.join(BASE_DIR, '.env'))
 
-# Quick-start development settings - unsuitable for production
 SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = True
 ALLOWED_HOSTS = []
@@ -42,7 +37,6 @@ ROOT_URLCONF = 'prepscore_project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        # --- CORRECT TEMPLATE DIRS PATH ---
         'DIRS': [BASE_DIR / 'templates'], # Use the / operator with Path objects
         'APP_DIRS': True,
         'OPTIONS': {
@@ -83,7 +77,6 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = 'static/'
-# --- CORRECT STATICFILES_DIRS PATH ---
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
 # Default primary key field type
