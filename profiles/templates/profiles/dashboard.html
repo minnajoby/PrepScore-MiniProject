@@ -1,166 +1,171 @@
 {% extends 'profiles/dashboard_base.html' %}
 {% load static %}
+
 {% block title %}Your Dashboard{% endblock %}
 
+{% block extra_head %}
+<style>
+    /* CSS for the light-themed donut chart */
+    .stat-card-chart-light {
+        position: relative; height: 120px; width: 120px; border-radius: 50%; display: grid; place-items: center;
+    }
+    .stat-card-chart-light::before {
+        content: ""; position: absolute; height: 80%; width: 80%;
+        background-color: #ffffff; border-radius: 50%;
+    }
+    .stat-card-chart-light .value-container-light {
+        position: relative; font-size: 2.2rem; color: #212529;
+    }
+</style>
+{% endblock %}
+
+
 {% block dashboard_content %}
-<!-- This is the single, main WHITE card for the entire page -->
-<div class="card shadow-sm border-0 rounded-4 h-100">
-    <div class="card-body p-4 p-md-5">
 
-        <!-- 1. HEADER & SCORE -->
-        <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
-            <div class="d-flex align-items-center">
-                <img src="{% static user.profile.profile_picture %}" class="rounded-circle me-3"
-                    style="width: 60px; height: 60px; object-fit: cover;" alt="Profile Picture">
+<!-- 2. MAIN PREPSCORE CARD -->
+<div class="card shadow-sm h-100 p-3 mb-4">
+    <div class="card-body d-flex align-items-center">
+        <div class="stat-card-chart-light me-4" data-score="{{ score|default:0 }}">
+            <div class="value-container-light fw-bold">0</div>
+        </div>
+        <div>
+            <h4 class="fw-bold">Your PrepScore</h4>
+            <p class="text-muted mb-0">This score represents your overall profile strength and job market readiness.</p>
+        </div>
+    </div>
+</div>
+
+<!-- 3. PROFILE ANALYSIS CARD (with 2-COLUMN CHART LAYOUT & RECOMMENDATIONS) -->
+<div class="card shadow-sm border-0 rounded-4">
+    <div class="card-header bg-light">
+        <h5 class="mb-0 fw-bold">Profile Analysis</h5>
+    </div>
+    <div class="card-body p-4">
+        
+        <div class="row g-5 align-items-center">
+            
+            <!-- LEFT COLUMN: PROFILE BREAKDOWN (BAR CHARTS) -->
+            <div class="col-lg-7">
+                <h6 class="fw-bold mb-3">Profile Breakdown</h6>
+                
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-1"><span class="fw-bold">Skills</span><span class="text-muted">{{ skills.count }} / 10</span></div>
+                    <div class="progress" style="height: 20px;"><div class="progress-bar bg-info" style="width: calc({{ skills.count }} * 10%)">{{ skills.count }}</div></div>
+                </div>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-1"><span class="fw-bold">Education</span><span class="text-muted">{{ educations.count }} / 3</span></div>
+                    <div class="progress" style="height: 20px;"><div class="progress-bar bg-success" style="width: calc({{ educations.count }} * 33.3%)">{{ educations.count }}</div></div>
+                </div>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-1"><span class="fw-bold">Experience</span><span class="text-muted">{{ experiences.count }} / 4</span></div>
+                    <div class="progress" style="height: 20px;"><div class="progress-bar bg-danger" style="width: calc({{ experiences.count }} * 25%)">{{ experiences.count }}</div></div>
+                </div>
                 <div>
-                    <h2 class="h4 mb-0 fw-bold">Welcome, {{ user.username }}!</h2>
-                    <p class="text-muted mb-0 small">{{ user.profile.headline|default:"No headline provided." }}</p>
+                    <div class="d-flex justify-content-between mb-1"><span class="fw-bold">Certifications</span><span class="text-muted">{{ certifications.count }} / 4</span></div>
+                    <div class="progress" style="height: 20px;"><div class="progress-bar bg-warning" style="width: calc({{ certifications.count }} * 25%)">{{ certifications.count }}</div></div>
                 </div>
             </div>
-            <div class="text-center">
-                <h5 class="text-muted small mb-0">Your PrepScore</h5>
-                <p class="display-4 fw-bold text-primary mb-0">{{ score|default:0 }}</p>
-            </div>
-        </div>
 
-        <!-- 2. PROFILE SUMMARY (Stat Cards) - RESPONSIVE -->
-        <div class="row g-3 text-center mb-4">
-            <div class="col-6 col-lg-3">
-                <div class="p-3 border rounded bg-light">
-                    <h4 class="fw-bold mb-0">{{ skills.count }}</h4><small class="text-muted">Skills</small>
-                </div>
-            </div>
-            <div class="col-6 col-lg-3">
-                <div class="p-3 border rounded bg-light">
-                    <h4 class="fw-bold mb-0">{{ educations.count }}</h4><small class="text-muted">Education</small>
-                </div>
-            </div>
-            <div class="col-6 col-lg-3">
-                <div class="p-3 border rounded bg-light">
-                    <h4 class="fw-bold mb-0">{{ experiences.count }}</h4><small class="text-muted">Experience</small>
-                </div>
-            </div>
-            <div class="col-6 col-lg-3">
-                <div class="p-3 border rounded bg-light">
-                    <h4 class="fw-bold mb-0">{{ certifications.count }}</h4><small class="text-muted">Certs</small>
-                </div>
-            </div>
-        </div>
-         <!-- === ADD THIS NEW RECOMMENDATIONS CARD === -->
-        <div class="col-12">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-light d-flex align-items-center">
-                    <i class="bi bi-lightbulb-fill me-2 text-primary"></i>
-                    <h5 class="mb-0 fw-bold">Recommendations</h5>
-                </div>
-                <ul class="list-group list-group-flush">
-                    {% for suggestion in suggestions %}
-                    <li class="list-group-item">
-                        {{ suggestion }}
-                    </li>
-                    {% empty %}
-                    <li class="list-group-item text-muted">No recommendations at this time. Your profile looks great!
-                    </li>
-                    {% endfor %}
-                </ul>
+            <!-- RIGHT COLUMN: SCORE BREAKDOWN (PIE CHART) -->
+            <div class="col-lg-5">
+                <h6 class="fw-bold mb-3 text-center">Score Contribution</h6>
+                <canvas id="scoreBreakdownChart"></canvas>
             </div>
         </div>
 
         <!-- SEPARATOR -->
         <hr class="my-4">
 
-        <!-- 3. PROFILE DETAILS -->
-
-        <!-- Skills Section -->
-        <div class="mb-4">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <h5 class="fw-bold mb-0">Skills</h5>
-                <a href="{% url 'manage_skills' %}" class="btn btn-sm btn-success">+ Add New</a>
+        <!-- === COLORFUL RECOMMENDATIONS SECTION === -->
+        <!-- === CORRECTED & FINAL RECOMMENDATIONS SECTION === -->
+<div class="mt-4">
+    <h6 class="fw-bold d-flex align-items-center">
+        <i class="bi bi-lightbulb-fill me-2 text-primary"></i>
+        Top Recommendations
+    </h6>
+    <div class="mt-3">
+        {% for suggestion in suggestions %}
+            {% if 'experience' in suggestion|lower or 'project' in suggestion|lower %}
+                <div class="recommendation-box bg-primary bg-opacity-10 text-primary-emphasis d-flex align-items-center mb-3">
+                    <i class="bi bi-briefcase-fill me-3 fs-4"></i>
+                    <div>{{ suggestion }}</div>
+                </div>
+            {% elif 'skill' in suggestion|lower or 'git' in suggestion|lower or 'sql' in suggestion|lower %}
+                <div class="recommendation-box bg-info bg-opacity-10 text-info-emphasis d-flex align-items-center mb-3">
+                    <i class="bi bi-gear-fill me-3 fs-4"></i>
+                    <div>{{ suggestion }}</div>
+                </div>
+            {% elif 'bio' in suggestion|lower or 'headline' in suggestion|lower or 'linkedin' in suggestion|lower %}
+                <div class="recommendation-box bg-warning bg-opacity-10 text-warning-emphasis d-flex align-items-center mb-3">
+                    <i class="bi bi-person-badge me-3 fs-4"></i>
+                    <div>{{ suggestion }}</div>
+                </div>
+            {% else %}
+                <div class="recommendation-box bg-success bg-opacity-10 text-success-emphasis d-flex align-items-center mb-3">
+                    <i class="bi bi-star-fill me-3 fs-4"></i>
+                    <div>{{ suggestion }}</div>
+                </div>
+            {% endif %}
+        {% empty %}
+            <div class="recommendation-box bg-success bg-opacity-10 text-success-emphasis d-flex align-items-center">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                <div>No specific recommendations at this time. Your profile looks great!</div>
             </div>
-            <div class="p-3 border rounded bg-light">
-                {% for skill in skills %}
-                <span class="badge bg-dark me-1 fs-6 p-2 mb-1">{{ skill.name }}</span>
-                {% empty %}
-                <p class="text-muted mb-0">You haven't added any skills yet.</p>
-                {% endfor %}
-            </div>
-        </div>
-
-        <!-- Academic Qualifications Section -->
-        <div class="mb-4">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <h5 class="fw-bold mb-0">Academic Qualifications</h5>
-                <a href="{% url 'manage_education' %}" class="btn btn-sm btn-success">+ Add New</a>
-            </div>
-            <ul class="list-group">
-                {% for edu in educations %}
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <div>
-                        <strong>{{ edu.degree }}</strong>
-                        <small class="text-muted d-block">{{ edu.institution }} - {{ edu.year_of_completion }}</small>
-                    </div>
-                    <div>
-                        <a href="{% url 'edit_education' pk=edu.pk %}" class="btn btn-sm btn-outline-primary">Edit</a>
-                        <a href="{% url 'delete_education' pk=edu.pk %}"
-                            class="btn btn-sm btn-outline-danger ms-1">Delete</a>
-                    </div>
-                </li>
-                {% empty %}
-                <li class="list-group-item text-muted">No academic qualifications added yet.</li>
-                {% endfor %}
-            </ul>
-        </div>
-
-        <!-- Work Experience Section -->
-        <div class="mb-4">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <h5 class="fw-bold mb-0">Work Experience</h5>
-                <a href="{% url 'manage_experience' %}" class="btn btn-sm btn-success">+ Add New</a>
-            </div>
-            <ul class="list-group">
-                {% for exp in experiences %}
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <div>
-                        <strong>{{ exp.title }}</strong>
-                        <small class="text-muted d-block">{{ exp.company }}</small>
-                    </div>
-                    <div>
-                        <a href="{% url 'edit_experience' pk=exp.pk %}" class="btn btn-sm btn-outline-primary">Edit</a>
-                        <a href="{% url 'delete_experience' pk=exp.pk %}"
-                            class="btn btn-sm btn-outline-danger ms-1">Delete</a>
-                    </div>
-                </li>
-                {% empty %}
-                <li class="list-group-item text-muted">No work experience added yet.</li>
-                {% endfor %}
-            </ul>
-        </div>
-
-        <!-- Certifications Section -->
-        <div class="mb-4">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <h5 class="fw-bold mb-0">Certifications</h5>
-                <a href="{% url 'manage_certifications' %}" class="btn btn-sm btn-success">+ Add New</a>
-            </div>
-            <ul class="list-group">
-                {% for cert in certifications %}
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <div>
-                        <strong>{{ cert.name }}</strong>
-                        <small class="text-muted d-block">{{ cert.issuing_organization }} - Issued: {{cert.date_issued|date:"M Y" }}</small>
-                    </div>
-                    <div>
-                        <!-- You will need to create the edit/delete URLs for certifications -->
-                        <a href="#" class="btn btn-sm btn-outline-primary">Edit</a>
-                        <a href="#" class="btn btn-sm btn-outline-danger ms-1">Delete</a>
-                    </div>
-                </li>
-                {% empty %}
-                <li class="list-group-item text-muted">No certifications added yet.</li>
-                {% endfor %}
-            </ul>
-        </div>
+        {% endfor %}
+    </div>
+</div>
 
     </div>
 </div>
+
+
+<!-- JAVASCRIPT FOR ALL CHARTS -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- 1. ANIMATE THE DONUT CHART ---
+        const scoreChart = document.querySelector('.stat-card-chart-light');
+        if (scoreChart) {
+            const progressValue = scoreChart.querySelector('.value-container-light');
+            const score = parseInt(scoreChart.dataset.score) || 0;
+            let startValue = 0, endValue = score, speed = 20;
+            let progress = setInterval(() => {
+                startValue++;
+                progressValue.textContent = `${startValue}`;
+                scoreChart.style.background = `conic-gradient(#8e44ad ${startValue * 3.6}deg, #e9ecef 0)`;
+                if (startValue >= endValue) clearInterval(progress);
+            }, speed);
+        }
+
+        // --- 2. BUILD THE PIE CHART ---
+        const pieCtx = document.getElementById('scoreBreakdownChart');
+        if (pieCtx) {
+            const scoreData = {{ score_contributions|safe }};
+            const labels = Object.keys(scoreData);
+            const data = Object.values(scoreData);
+            new Chart(pieCtx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Points Contributed',
+                        data: data,
+                        backgroundColor: [
+                            'rgba(54, 162, 235, 0.8)', 'rgba(75, 192, 192, 0.8)',
+                            'rgba(255, 99, 132, 0.8)', 'rgba(255, 206, 86, 0.8)',
+                            'rgba(153, 102, 255, 0.8)'
+                        ],
+                        borderColor: '#ffffff',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            });
+        }
+    });
+</script>
+
 {% endblock %}

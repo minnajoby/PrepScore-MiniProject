@@ -10,7 +10,7 @@ from .forms import ProfileForm,SkillForm, EducationForm, ExperienceForm,LoginFor
 from django.contrib.auth.views import PasswordResetConfirmView
 from django.urls import reverse_lazy
 from .forms import CustomUserCreationForm 
-from .scorer import calculate_prep_score, get_suggestions # Add this import
+from .scorer import calculate_ml_score, get_suggestions,get_score_contributions
 
 # --- VIEWS ---
 
@@ -82,15 +82,21 @@ def dashboard_view(request):
     certifications = Certification.objects.filter(profile=profile)
 
     # Calculate the score
-    score = calculate_prep_score(profile)
+    score = calculate_ml_score(profile)
     suggestions = get_suggestions(profile, score)
+    score_contributions = get_score_contributions(profile)
+
+
     context = {
+        'profile': profile,
         'skills': skills,
         'educations': educations,
         'experiences': experiences,
+
         'certifications': certifications,
-        'score': score, 
+        'score': score,
         'suggestions': suggestions,
+        'score_contributions': score_contributions,
     }
     return render(request, 'profiles/dashboard.html', context)
 
@@ -258,7 +264,7 @@ def manage_profile_view(request):
         if form.is_valid():
             form.save()
             messages.success(request, "Your profile has been updated successfully!")
-            return redirect('manage_profile') # Redirect back to the same page
+            return redirect('dashboard') # Redirect back to the same page
     else:
         # For a GET request, populate the form with the profile's current data
         form = ProfileForm(instance=profile)
@@ -277,7 +283,7 @@ def manage_education_view(request):
             education.profile = profile
             education.save()
             messages.success(request, "New education entry successfully added!")
-            return redirect('manage_education') # Redirect back to the same page
+            return redirect('dashboard') # Redirect back to the same page
     else:
         form = EducationForm() # A blank form for GET requests
 
@@ -301,7 +307,7 @@ def manage_skills_view(request):
             skill.profile = profile
             skill.save()
             messages.success(request, "New skill successfully added!")
-            return redirect('manage_skills') # Redirect back to the same page
+            return redirect('dashboard') # Redirect back to the same page
     else:
         form = SkillForm() # A blank form for GET requests
 
@@ -324,7 +330,7 @@ def manage_experience_view(request):
             experience.profile = profile
             experience.save()
             messages.success(request, "New experience entry successfully added!")
-            return redirect('manage_experience')
+            return redirect('dashboard')
     else:
         form = ExperienceForm()
     experiences = Experience.objects.filter(profile=profile)
@@ -341,7 +347,7 @@ def manage_certifications_view(request):
             certification.profile = profile
             certification.save()
             messages.success(request, "New certification successfully added!")
-            return redirect('manage_certifications')
+            return redirect('dashboard')
     else:
         form = CertificationForm()
     certifications = Certification.objects.filter(profile=profile)
