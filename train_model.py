@@ -44,6 +44,11 @@ mae = mean_absolute_error(y_test, predictions)
 print(f"Mean Absolute Error on test data: {mae:.2f}")
 # This tells you, on average, how many "points" your model's prediction is off by. A low number is good.
 
+# ---  TO CALCULATE R-SQUARED ---
+r2 = r2_score(y_test, predictions)
+print(f"\nR-squared (R²) Score: {r2:.2f}")
+print("Interpretation: The model can explain {:.0f}% of the variance in the scores.".format(r2 * 100))
+
 # 6. Save the Trained Model to a File
 print("Step 6: Saving the trained model to 'prepscore_ml_model.pkl'...")
 # We use joblib to save the model. It's efficient for scikit-learn models.

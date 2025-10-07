@@ -80,22 +80,15 @@ def dashboard_view(request):
     educations = Education.objects.filter(profile=profile)
     experiences = Experience.objects.filter(profile=profile)
     certifications = Certification.objects.filter(profile=profile)
-
-    # Calculate the score
+    
     score = calculate_ml_score(profile)
     suggestions = get_suggestions(profile, score)
     score_contributions = get_score_contributions(profile)
 
-
     context = {
-        'profile': profile,
-        'skills': skills,
-        'educations': educations,
-        'experiences': experiences,
-
-        'certifications': certifications,
-        'score': score,
-        'suggestions': suggestions,
+        'profile': profile, 'skills': skills, 'educations': educations,
+        'experiences': experiences, 'certifications': certifications,
+        'score': score, 'suggestions': suggestions,
         'score_contributions': score_contributions,
     }
     return render(request, 'profiles/dashboard.html', context)
@@ -275,7 +268,16 @@ def manage_profile_view(request):
 def manage_education_view(request):
     profile, created = Profile.objects.get_or_create(user=request.user)
     
-    # This view handles both POST (for adding) and GET (for displaying)
+    # --- THIS IS THE FIX ---
+    # 1. Get the list of items first.
+    educations = Education.objects.filter(profile=profile).order_by('-year_of_completion')
+    
+    # 2. Initialize the context dictionary.
+    context = {
+        'educations': educations,
+    }
+    # --- END OF FIX ---
+    
     if request.method == 'POST':
         form = EducationForm(request.POST)
         if form.is_valid():
@@ -283,19 +285,14 @@ def manage_education_view(request):
             education.profile = profile
             education.save()
             messages.success(request, "New education entry successfully added!")
-            return redirect('dashboard') # Redirect back to the same page
+            return redirect('dashboard') # Redirect on success
+
     else:
-        form = EducationForm() # A blank form for GET requests
+        form = EducationForm()
 
-    # Get the list of all existing education entries for this user
-    educations = Education.objects.filter(profile=profile).order_by('-year_of_completion')
-    
-    context = {
-        'form': form,
-        'educations': educations
-    }
+    # 3. Add the form to the context before rendering.
+    context['form'] = form
     return render(request, 'profiles/manage_education.html', context)
-
 @login_required
 def manage_skills_view(request):
     profile, created = Profile.objects.get_or_create(user=request.user)

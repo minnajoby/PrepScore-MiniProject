@@ -25,13 +25,33 @@
 <!-- 2. MAIN PREPSCORE CARD -->
 <div class="card shadow-sm h-100 p-3 mb-4">
     <div class="card-body d-flex align-items-center">
-        <div class="stat-card-chart-light me-4" data-score="{{ score|default:0 }}">
-            <div class="value-container-light fw-bold">0</div>
-        </div>
-        <div>
-            <h4 class="fw-bold">Your PrepScore</h4>
-            <p class="text-muted mb-0">This score represents your overall profile strength and job market readiness.</p>
-        </div>
+        
+        <!-- We check the score variable directly -->
+        {% if score == 0 %}
+            
+            <!-- If the score is 0, display a static 0 -->
+            <div class="stat-card-chart-light me-4" data-score="0">
+                <div class="value-container-light fw-bold">0</div>
+            </div>
+            <div>
+                <h4 class="fw-bold">Your PrepScore</h4>
+                <p class="text-muted mb-0">Add items to your profile to generate your score!</p>
+            </div>
+
+        {% else %}
+
+            <!-- Otherwise, display the REAL, animated score from the ML model -->
+            <div class="stat-card-chart-light me-4" data-score="{{ score }}">
+                <div class="value-container-light fw-bold">0</div> 
+            </div>
+            <div>
+                <h4 class="fw-bold">Your PrepScore</h4>
+                <p class="text-muted mb-0">This score represents your overall profile strength and job market readiness.</p>
+            </div>
+
+        {% endif %}
+        <!-- === END OF FIX === -->
+
     </div>
 </div>
 

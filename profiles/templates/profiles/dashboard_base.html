@@ -1,192 +1,183 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Dashboard{% endblock %} - PrepScore</title>
-    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      {% block title %}
+        Dashboard
+      {% endblock %}- PrepScore
+    </title>
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #0d1b2a;
-        }
-
-        .sidebar {
-            width: 260px;
-            background-color: #0d1b2a;
-            color: #a9d6e5;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .sidebar .profile-header {
-            text-align: center;
-            padding: 1.5rem 1rem;
-            border-bottom: 1px solid #2a3a50;
-        }
-
-        .sidebar .profile-header img {
-            width: 90px;
-            height: 90px;
-            object-fit: cover;
-            border: 3px solid #1e90ff;
-        }
-
-        .sidebar .profile-header h2 {
-            font-size: 1.1rem;
-            color: white;
-            margin-top: 0.75rem;
-        }
-
-        .sidebar .profile-header p {
-            font-size: 0.85rem;
-            color: #778da9;
-        }
-
-        .sidebar .nav-main {
-            flex-grow: 1;
-        }
-
-        .sidebar .nav-link {
-            color: #a9d6e5;
-            font-weight: 500;
-            padding: 0.75rem 1.5rem;
-            display: flex;
-            align-items: center;
-        }
-
-        .sidebar .nav-link i {
-            margin-right: 1rem;
-            font-size: 1.2rem;
-        }
-
-        .sidebar .nav-link.active,
-        .sidebar .nav-link:hover {
-            background-color: #1e90ff;
-            color: white;
-        }
-
-        .main-content-area {
-            flex-grow: 1;
-            width: 100%;
-            padding: 2rem;
-            /* This sets the dark background for the content area */
-            background-color: #0d1b2a;
-        }
-
-        .dashboard-header-mobile {
-            background-color: #ffffff;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        }
-
-        /* --- CSS FOR THE CIRCULAR PROGRESS BAR --- */
-        .stat-card-chart-light {
-            position: relative;
-            height: 90px;
-            width: 90px;
-            border-radius: 50%;
-            display: grid;
-            place-items: center;
-        }
-
-        .stat-card-chart-light::before {
-            content: "";
-            position: absolute;
-            height: 75%;
-            width: 75%;
-            background-color: #ffffff;
-            /* The WHITE inner circle */
-            border-radius: 50%;
-        }
-
-        .stat-card-chart-light .value-container-light {
-            position: relative;
-            font-size: 1.5rem;
-            color: #212529;
-            /* Dark text for the number */
-        }
-
-        .recommendation-box {
-            border-radius: .5rem;
-            border: 1px solid transparent;
-        }
+      /* --- GLASSMORPHISM THEME STYLES (NO IMAGE) --- */
+      body {
+        font-family: 'Poppins', sans-serif;
+        background: conic-gradient(from -90deg at 10% 110%, #1b263b 50%, #0d1b2a) !important;
+        background-attachment: fixed;
+      }
+      
+      .dashboard-wrapper {
+        display: flex;
+        min-height: 100vh;
+      }
+      
+      /* --- GLASSMORPHISM SIDEBAR STYLES --- */
+      .sidebar {
+        width: 280px;
+        flex-shrink: 0;
+        /* The Glass Effect */
+        background-color: rgba(13, 27, 42, 0.75);
+        backdrop-filter: blur(15px);
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+        color: #a9d6e5;
+        display: flex;
+        flex-direction: column;
+      }
+      .sidebar .profile-header {
+        text-align: center;
+        padding: 1.5rem 1rem;
+      }
+      .sidebar .profile-header img {
+        width: 90px;
+        height: 90px;
+        object-fit: cover;
+        border: 3px solid rgba(30, 144, 255, 0.5);
+      }
+      .sidebar .nav-main {
+        flex-grow: 1;
+      }
+      .sidebar .nav-link {
+        color: #a9d6e5;
+        font-weight: 500;
+        padding: 0.8rem 1.5rem;
+        display: flex;
+        align-items: center;
+        border-radius: 0.5rem;
+        margin: 0.25rem 0;
+        transition: all 0.3s ease;
+      }
+      .sidebar .nav-link i {
+        margin-right: 1rem;
+        font-size: 1.2rem;
+      }
+      .sidebar .nav-link:hover {
+        background-color: rgba(30, 144, 255, 0.2);
+        color: white;
+        transform: translateX(5px);
+      }
+      .sidebar .nav-link.active {
+        background-color: #031122ff;
+        color: white;
+        box-shadow: 0 4px 15px rgba(30, 144, 255, 0.3);
+      }
+      .sidebar .logout-section .nav-link {
+        border: none;
+        background: none;
+        width: 100%;
+        text-align: left;
+      }
+      
+      /* --- MAIN CONTENT & GLASS CARD STYLES --- */
+      .main-content-area {
+        flex-grow: 1;
+        width: 100%;
+        padding: 2rem;
+        background-color: transparent;
+      }
+      .glass-card {
+        background-color: rgba(43, 48, 53, 0.7); /* Semi-transparent dark gray */
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: white;
+        border-radius: 1rem; /* Softer corners */
+      }
+      .glass-card {
+        background-color: rgba(43, 48, 53, 0.7); /* A semi-transparent dark gray */
+        backdrop-filter: blur(15px); /* The frosted glass blur */
+        border: 1px solid rgba(255, 255, 255, 0.1); /* A subtle light border */
+        color: white; /* Make text inside the card white by default */
+        border-radius: 1rem; /* Softer, modern corners */
+      }
     </style>
-    {% block extra_head %}{% endblock %}
-</head>
+    {% block extra_head %}
 
-<body>
+    {% endblock %}
+  </head>
+
+  <body>
     <div class="d-flex">
-        <!-- DESKTOP SIDEBAR (This is hidden on mobile screens) -->
-        <aside class="sidebar vh-100 d-none d-lg-flex sticky-top">
-            {% include 'profiles/_sidebar.html' %}
-        </aside>
+      <!-- DESKTOP SIDEBAR (This is hidden on mobile screens) -->
+      <aside class="sidebar vh-100 d-none d-lg-flex sticky-top">
+        {% include 'profiles/_sidebar.html' %}
+      </aside>
 
-        <!-- MAIN CONTENT AREA -->
-        <main class="main-content-area">
-            <!-- MOBILE-ONLY HEADER with "Hamburger" Menu -->
-            <header class="dashboard-header-mobile d-lg-none d-flex justify-content-between align-items-center p-3">
-                <a class="navbar-brand fw-bold fs-4" href="{% url 'dashboard' %}">PrepScore</a>
-                <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas"
-                    data-bs-target="#mobileSidebar">
-                    <i class="bi bi-list"></i>
-                </button>
-            </header>
+      <!-- MAIN CONTENT AREA -->
+      <main class="main-content-area">
+        <header class="d-flex justify-content-end align-items-center mb-4">
+          <div class="text-white">
+            <i class="bi bi-person-fill me-1"></i>
+            <span class="fw-bold">{{ user.username }}</span>
+          </div>
+        </header>
+        <!-- MOBILE-ONLY HEADER with "Hamburger" Menu -->
+        <header class="dashboard-header-mobile d-lg-none d-flex justify-content-between align-items-center p-3">
+          <a class="navbar-brand fw-bold fs-4" href="{% url 'dashboard' %}">PrepScore</a>
+          <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar"><i class="bi bi-list"></i></button>
+        </header>
 
-            <div class="p-3">
-                {% if messages %}
-                <div class="messages">
-                    {% for message in messages %}
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                    {% endfor %}
+        <div class="p-3">
+          {% if messages %}
+            <div class="messages">
+              {% for message in messages %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                  {{ message }}
+                  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
-                {% endif %}
-                {% block dashboard_content %}
-                <!-- Page specific content will go here -->
-                {% endblock %}
+              {% endfor %}
             </div>
-        </main>
+          {% endif %}
+          {% block dashboard_content %}
+            <!-- Page specific content will go here -->
+          {% endblock %}
+        </div>
+      </main>
     </div>
 
     <!-- THE HIDDEN OFFCANVAS SIDEBAR FOR MOBILE -->
     <div class="offcanvas offcanvas-start bg-dark text-white" tabindex="-1" id="mobileSidebar">
-        <div class="offcanvas-header border-bottom border-secondary">
-            <h5 class="offcanvas-title">Menu</h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
-        </div>
-        <div class="offcanvas-body">
-            <!-- We reuse the sidebar content here -->
-            {% include 'profiles/_sidebar.html' %}
-        </div>
+      <div class="offcanvas-header border-bottom border-secondary">
+        <h5 class="offcanvas-title">Menu</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+      </div>
+      <div class="offcanvas-body">
+        <!-- We reuse the sidebar content here -->
+        {% include 'profiles/_sidebar.html' %}
+      </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
     <!-- === ADD THIS NEW SCRIPT BLOCK FOR AUTO-DISMISSING ALERTS === -->
     <script>
-        // Wait for the entire page to load
-        window.addEventListener('load', function () {
-            // Find all elements with the class 'alert'
-            const alerts = document.querySelectorAll('.alert');
-
-            // Loop through each alert
-            alerts.forEach(function (alert) {
-                // Set a timeout to run a function after 5000 milliseconds (5 seconds)
-                setTimeout(function () {
-                    // Use Bootstrap's built-in Alert instance to close it
-                    const bsAlert = new bootstrap.Alert(alert);
-                    bsAlert.close();
-                }, 5000); // 5000ms = 5 seconds
-            });
-        });
+      // Wait for the entire page to load
+      window.addEventListener('load', function () {
+        // Find all elements with the class 'alert'
+        const alerts = document.querySelectorAll('.alert')
+      
+        // Loop through each alert
+        alerts.forEach(function (alert) {
+          // Set a timeout to run a function after 5000 milliseconds (5 seconds)
+          setTimeout(function () {
+            // Use Bootstrap's built-in Alert instance to close it
+            const bsAlert = new bootstrap.Alert(alert)
+            bsAlert.close()
+          }, 5000) // 5000ms = 5 seconds
+        })
+      })
     </script>
     <!-- === END OF NEW SCRIPT BLOCK === -->
-
-</body>
-
+  </body>
 </html>

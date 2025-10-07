@@ -1,26 +1,54 @@
 {% load static %}
-<div class="profile-header text-center pt-3 pb-4 border-bottom border-secondary">
-    <img src="{% static user.profile.profile_picture %}" class="rounded-circle mb-3" style="width: 90px; height: 90px; object-fit: cover; border: 3px solid #1e90ff;" alt="Profile Picture">
-    <div>
-        <h2 class="h5 text-white mb-1">{{ user.username }}</h2>
-        <p class="small text-white-50 mb-0 text-truncate">{{ user.profile.headline|default:"No headline" }}</p>
-    </div>
+
+<!-- 1. BRAND HEADER -->
+<div class="sidebar-header text-center py-4">
+    <a href="{% url 'dashboard' %}" class="text-white text-decoration-none">
+        <h2 class="h4 fw-bold mb-0">
+            PrepScore
+        </h2>
+    </a>
 </div>
-<ul class="nav flex-column pt-3 flex-grow-1">
-    <li class="nav-item"><a class="nav-link {% if request.path == '/dashboard/' %}active{% endif %}" href="{% url 'dashboard' %}"><i class="bi bi-grid-fill"></i>Dashboard</a></li>
-    <li class="nav-item"><a class="nav-link {% if request.path == '/profile/' %}active{% endif %}" href="{% url 'manage_profile' %}"><i class="bi bi-person-fill"></i>Profile</a></li>
-    <li class="nav-item"><a class="nav-link {% if request.path == '/education/' %}active{% endif %}" href="{% url 'manage_education' %}"><i class="bi bi-mortarboard-fill"></i>Education</a></li>
-    <li class="nav-item"><a class="nav-link {% if request.path == '/skills/' %}active{% endif %}" href="{% url 'manage_skills' %}"><i class="bi bi-gear-fill"></i>Skills</a></li>
-    <li class="nav-item"><a class="nav-link {% if request.path == '/experience/' %}active{% endif %}" href="{% url 'manage_experience' %}"><i class="bi bi-briefcase-fill"></i>Work Experience</a></li>
-    <li class="nav-item"><a class="nav-link {% if request.path == '/certifications/' %}active{% endif %}" href="{% url 'manage_certifications' %}"><i class="bi bi-patch-check-fill"></i>Certifications</a></li>
-</ul>
-<ul class="nav flex-column">
+
+<!-- 2. MAIN NAVIGATION (Takes up all available space) -->
+<ul class="nav flex-column nav-pills nav-flush flex-grow-1 px-2">
     <li class="nav-item">
-        <form action="{% url 'logout' %}" method="post">
-            {% csrf_token %}
-            <button type="submit" class="nav-link" style="border:none; background:none; width:100%; text-align:left;">
-                <i class="bi bi-box-arrow-right"></i>Logout
-            </button>
-        </form>
+        <a class="nav-link {% if request.path == '/dashboard/' %}active{% endif %}" href="{% url 'dashboard' %}">
+            <i class="bi bi-grid-fill me-2"></i>Dashboard
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if request.path == '/profile/' %}active{% endif %}" href="{% url 'manage_profile' %}">
+            <i class="bi bi-person-fill me-2"></i>Profile
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if 'education' in request.path %}active{% endif %}" href="{% url 'manage_education' %}">
+            <i class="bi bi-mortarboard-fill me-2"></i>Education
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if 'skill' in request.path %}active{% endif %}" href="{% url 'manage_skills' %}">
+            <i class="bi bi-gear-fill me-2"></i>Skills
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if 'experience' in request.path %}active{% endif %}" href="{% url 'manage_experience' %}">
+            <i class="bi bi-briefcase-fill me-2"></i>Work Experience
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if 'certifications' in request.path %}active{% endif %}" href="{% url 'manage_certifications' %}">
+            <i class="bi bi-patch-check-fill me-2"></i>Certifications
+        </a>
     </li>
 </ul>
+
+<!-- 3. LOGOUT (Anchored at the bottom) -->
+<div class="logout-section px-2 pb-3">
+    <form action="{% url 'logout' %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="nav-link w-100">
+            <i class="bi bi-box-arrow-right me-2"></i>Logout
+        </button>
+    </form>
+</div>
