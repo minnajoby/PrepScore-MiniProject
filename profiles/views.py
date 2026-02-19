@@ -5,8 +5,8 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Profile, Skill, Education, Experience, Certification
-from .forms import ProfileForm,SkillForm, EducationForm, ExperienceForm,LoginForm, CertificationForm
+from .models import Profile, Skill, Experience, Certification
+from .forms import ProfileForm,SkillForm, ExperienceForm,LoginForm, CertificationForm
 from django.contrib.auth.views import PasswordResetConfirmView
 from django.urls import reverse_lazy
 from .forms import CustomUserCreationForm 
@@ -77,7 +77,6 @@ def dashboard_view(request):
     profile, created = Profile.objects.get_or_create(user=request.user)
     
     skills = Skill.objects.filter(profile=profile)
-    educations = Education.objects.filter(profile=profile)
     experiences = Experience.objects.filter(profile=profile)
     certifications = Certification.objects.filter(profile=profile)
     
@@ -86,7 +85,7 @@ def dashboard_view(request):
     score_contributions = get_score_contributions(profile)
 
     context = {
-        'profile': profile, 'skills': skills, 'educations': educations,
+        'profile': profile, 'skills': skills,
         'experiences': experiences, 'certifications': certifications,
         'score': score, 'suggestions': suggestions,
         'score_contributions': score_contributions,
@@ -102,27 +101,14 @@ def add_skill_view(request):
             skill = form.save(commit=False)
             skill.profile = profile
             skill.save()
+            # Update cache count
+            profile.num_skills = Skill.objects.filter(profile=profile).count()
+            profile.save()
             messages.success(request, "Skill successfully added!")
             return redirect('dashboard')
     else:
         form = SkillForm()
-    return render(request, 'profiles/dark_form_template.html', context)
-
-@login_required
-def add_education_view(request):
-    profile, created = Profile.objects.get_or_create(user=request.user)
-    if request.method == 'POST':
-        form = EducationForm(request.POST)
-        if form.is_valid():
-            education = form.save(commit=False)
-            education.profile = profile
-            education.save()
-            messages.success(request, "Education entry successfully added!")
-            return redirect('dashboard')
-    else:
-        form = EducationForm()
-        return render(request, 'profiles/dark_form_template.html', context)
-
+    return render(request, 'profiles/dark_form_template.html', {'form': form, 'form_title': 'Add Skill', 'submit_button_text': 'Add Skill'})
 
 @login_required
 def add_experience_view(request):
@@ -133,11 +119,14 @@ def add_experience_view(request):
             experience = form.save(commit=False)
             experience.profile = profile
             experience.save()
+            # Update cache count
+            profile.num_experiences = Experience.objects.filter(profile=profile).count()
+            profile.save()
             messages.success(request, "Experience entry successfully added!")
             return redirect('dashboard')
     else:
         form = ExperienceForm()
-        return render(request, 'profiles/dark_form_template.html', context)
+        return render(request, 'profiles/dark_form_template.html', {'form': form, 'form_title': 'Add Experience', 'submit_button_text': 'Add Experience'})
 
 # --- UPDATE VIEWS ---
 
@@ -173,29 +162,6 @@ def edit_skill_view(request, pk):
     return render(request, 'profiles/light_form_template.html', context)
 
 @login_required
-def edit_education_view(request, pk):
-    # Get the object we are editing
-    education = get_object_or_404(Education, pk=pk, profile__user=request.user)
-
-    if request.method == 'POST':
-        form = EducationForm(request.POST, instance=education)
-        if form.is_valid():
-            form.save()
-            messages.success(request, f"Education entry for '{education.degree}' was updated successfully!")
-            return redirect('manage_education')
-    else:
-        form = EducationForm(instance=education)
-    
-    context = {
-        'form': form,
-        'form_title': f'Edit Education: {education.degree}',
-        'form_subtitle': 'Update the details of your academic qualification.',
-        'submit_button_text': 'Update Education'
-    }
-    
-    return render(request, 'profiles/light_form_template.html', context)
-
-@login_required
 def edit_experience_view(request, pk):
     # Get the object we are editing
     experience = get_object_or_404(Experience, pk=pk, profile__user=request.user)
@@ -224,24 +190,23 @@ def delete_skill_view(request, pk):
     skill = get_object_or_404(Skill, pk=pk, profile__user=request.user)
     if request.method == 'POST':
         skill.delete()
+        # Update cache count
+        profile = skill.profile
+        profile.num_skills = Skill.objects.filter(profile=profile).count()
+        profile.save()
         messages.info(request, "Skill has been deleted.")
         return redirect('dashboard')
     return render(request, 'profiles/confirm_delete.html', {'object': skill, 'type': 'Skill'})
-
-@login_required
-def delete_education_view(request, pk):
-    education = get_object_or_404(Education, pk=pk, profile__user=request.user)
-    if request.method == 'POST':
-        education.delete()
-        messages.info(request, "Education entry has been deleted.")
-        return redirect('dashboard')
-    return render(request, 'profiles/confirm_delete.html', {'object': education, 'type': 'Education Entry'})
 
 @login_required
 def delete_experience_view(request, pk):
     experience = get_object_or_404(Experience, pk=pk, profile__user=request.user)
     if request.method == 'POST':
         experience.delete()
+        # Update cache count
+        profile = experience.profile
+        profile.num_experiences = Experience.objects.filter(profile=profile).count()
+        profile.save()
         messages.info(request, "Experience entry has been deleted.")
         return redirect('dashboard')
     return render(request, 'profiles/confirm_delete.html', {'object': experience, 'type': 'Experience Entry'})
@@ -253,7 +218,7 @@ def manage_profile_view(request):
 
     if request.method == 'POST':
         # Populate the form with submitted data AND the existing profile instance
-        form = ProfileForm(request.POST, instance=profile)
+        form = ProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             form.save()
             messages.success(request, "Your profile has been updated successfully!")
@@ -265,35 +230,6 @@ def manage_profile_view(request):
     return render(request, 'profiles/manage_profile.html', {'form': form})
 
 @login_required
-def manage_education_view(request):
-    profile, created = Profile.objects.get_or_create(user=request.user)
-    
-    # --- THIS IS THE FIX ---
-    # 1. Get the list of items first.
-    educations = Education.objects.filter(profile=profile).order_by('-year_of_completion')
-    
-    # 2. Initialize the context dictionary.
-    context = {
-        'educations': educations,
-    }
-    # --- END OF FIX ---
-    
-    if request.method == 'POST':
-        form = EducationForm(request.POST)
-        if form.is_valid():
-            education = form.save(commit=False)
-            education.profile = profile
-            education.save()
-            messages.success(request, "New education entry successfully added!")
-            return redirect('dashboard') # Redirect on success
-
-    else:
-        form = EducationForm()
-
-    # 3. Add the form to the context before rendering.
-    context['form'] = form
-    return render(request, 'profiles/manage_education.html', context)
-@login_required
 def manage_skills_view(request):
     profile, created = Profile.objects.get_or_create(user=request.user)
     
@@ -303,6 +239,9 @@ def manage_skills_view(request):
             skill = form.save(commit=False)
             skill.profile = profile
             skill.save()
+            # Update cache
+            profile.num_skills = Skill.objects.filter(profile=profile).count()
+            profile.save()
             messages.success(request, "New skill successfully added!")
             return redirect('dashboard') # Redirect back to the same page
     else:
@@ -326,6 +265,9 @@ def manage_experience_view(request):
             experience = form.save(commit=False)
             experience.profile = profile
             experience.save()
+            # Update cache
+            profile.num_experiences = Experience.objects.filter(profile=profile).count()
+            profile.save()
             messages.success(request, "New experience entry successfully added!")
             return redirect('dashboard')
     else:
@@ -343,6 +285,9 @@ def manage_certifications_view(request):
             certification = form.save(commit=False)
             certification.profile = profile
             certification.save()
+            # Update cache
+            profile.num_certifications = Certification.objects.filter(profile=profile).count()
+            profile.save()
             messages.success(request, "New certification successfully added!")
             return redirect('dashboard')
     else:
@@ -379,6 +324,10 @@ def delete_certification_view(request, pk):
     certification = get_object_or_404(Certification, pk=pk, profile__user=request.user)
     if request.method == 'POST':
         certification.delete()
+        # Update cache
+        profile = certification.profile
+        profile.num_certifications = Certification.objects.filter(profile=profile).count()
+        profile.save()
         messages.info(request, "Certification has been deleted.")
         return redirect('manage_certifications')
     

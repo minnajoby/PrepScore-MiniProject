@@ -5,7 +5,7 @@ import random
 from django.conf import settings
 
 # --- IMPORTS ---
-from .models import Profile, Skill, Education, Experience, Certification
+from .models import Profile, Skill, Experience, Certification
 from .ml_model.features import profile_to_vector
 from .config import SKILL_SCORES, DEFAULT_SKILL_SCORE, BASE_POINTS
 
@@ -24,14 +24,13 @@ def get_score_contributions(profile):
         return contributions
 
     # Score Core Profile Details
-    if profile.bio: contributions["Profile Details"] += BASE_POINTS['bio']
-    if hasattr(profile, 'linkedin_url') and profile.linkedin_url: contributions["Profile Details"] += BASE_POINTS['linkedin']
-    if hasattr(profile, 'github_url') and profile.github_url: contributions["Profile Details"] += BASE_POINTS['github']
+    # (Bio, Headline, Sites removed for AI optimization)
+    if profile.resume: contributions["Profile Details"] += 20 # Bonus for resume?
 
     # Score other sections
-    contributions["Education"] = profile.education_set.count() * BASE_POINTS['education']
-    contributions["Experience"] = profile.experience_set.count() * BASE_POINTS['experience']
-    contributions["Certifications"] = profile.certification_set.count() * BASE_POINTS['certification']
+    contributions["Education"] = profile.num_educations * BASE_POINTS['education']
+    contributions["Experience"] = profile.num_experiences * BASE_POINTS['experience']
+    contributions["Certifications"] = profile.num_certifications * BASE_POINTS['certification']
 
     # Balanced skill scoring
     for skill in profile.skill_set.all():
@@ -53,9 +52,7 @@ def calculate_rule_based_score(profile):
         (10 * 5) + # Approx. score for 10 skills
         (2 * BASE_POINTS['education']) +
         (3 * BASE_POINTS['experience']) +
-        (2 * BASE_POINTS['certification']) +BASE_POINTS['linkedin'] +
-        BASE_POINTS['github'] +
-        BASE_POINTS['bio']
+        (2 * BASE_POINTS['certification'])
     )
     
     # Get the user's current raw score
@@ -88,9 +85,8 @@ def calculate_ml_score(profile):
     if not profile: return 0
     
     has_content = (
-        profile.skill_set.exists() or profile.education_set.exists() or
-        profile.experience_set.exists() or profile.certification_set.exists() or
-        profile.bio or profile.headline
+        profile.num_skills > 0 or profile.num_educations > 0 or
+        profile.num_experiences > 0 or profile.num_certifications > 0
     )
     if not has_content: return 0
     if PREPSCORE_MODEL is None: return 0
@@ -113,15 +109,13 @@ def get_suggestions(profile, score):
     if not profile: return ["Start by building your profile! Add your skills, education, and any experience you have."]
     
     suggestions = []
-    num_experiences = profile.experience_set.count()
+    num_experiences = profile.num_experiences
     skill_names = {skill.name.lower() for skill in Skill.objects.filter(profile=profile)}
     
     if num_experiences == 0: suggestions.append({ "priority": 1, "text": "Gaining practical experience through an internship or personal project is the most impactful way to boost your score." })
     
     missing_keywords = [k for k in SKILL_SCORES.keys() if k not in skill_names]
     if missing_keywords: suggestions.append({ "priority": 2, "text": f"Consider learning a high-demand skill like '{random.choice(missing_keywords).title()}'." })
-    
-    if not profile.bio or len(profile.bio) < 100: suggestions.append({ "priority": 3, "text": "Expand on your professional bio. A detailed summary helps recruiters understand your goals." })
     
     if len(skill_names) < 5: suggestions.append({ "priority": 4, "text": "Broaden your skillset. Aim to list at least 5-7 relevant technical and soft skills." })
     

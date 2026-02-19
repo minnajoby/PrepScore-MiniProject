@@ -8,16 +8,16 @@ import joblib
 print("--- Starting Model Training ---")
 
 # 1. Load the Dataset
-print("Step 1: Loading data from training_data.csv...")
-df = pd.read_csv('training_data_cleaned.csv')
+print("Step 1: Loading data from training_data_final.csv...")
+df = pd.read_csv('training_data_final.csv')
 print(f"Data loaded successfully. Shape: {df.shape}")
 
 # 2. Define Features (X) and Target (y)
 print("Step 2: Defining features and target...")
-# The 'target_score' is what we want to predict.
-y = df['target_score']
+# The 'readiness_score' is what we want to predict.
+y = df['readiness_score']
 # All other columns are the features the model will learn from.
-X = df.drop('target_score', axis=1)
+X = df.drop('readiness_score', axis=1)
 print(f"Features defined. Number of features: {len(X.columns)}")
 
 # 3. Split Data into Training and Testing Sets

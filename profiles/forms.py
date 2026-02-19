@@ -1,7 +1,7 @@
 # In profiles/forms.py
 
 from django import forms
-from .models import Profile,Skill,Education,Experience,Certification # Import the Skill model
+from .models import Profile,Skill,Experience,Certification # Import the Skill model
 from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
@@ -27,18 +27,6 @@ class SkillForm(forms.ModelForm):
             'name': forms.TextInput(attrs={'class': 'form-control'})
         }
 
-class EducationForm(forms.ModelForm):
-    class Meta:
-        model = Education
-        fields = ['degree', 'institution', 'year_of_completion']
-        
-        # This is the key. We tell Django what classes to add to the HTML.
-        widgets = {
-            'degree': forms.TextInput(attrs={'class': 'form-control'}),
-            'institution': forms.TextInput(attrs={'class': 'form-control'}),
-            'year_of_completion': forms.NumberInput(attrs={'class': 'form-control'}),
-        }
-        
 class ExperienceForm(forms.ModelForm):
     class Meta:
         model = Experience
@@ -54,15 +42,12 @@ class ExperienceForm(forms.ModelForm):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['headline', 'location', 'bio','linkedin_url', 'github_url']
+        fields = ['location', 'resume']
         
         # This is the key. We tell Django what classes to add to the HTML.
         widgets = {
-            'headline': forms.TextInput(attrs={'class': 'form-control'}),
             'location': forms.TextInput(attrs={'class': 'form-control'}),
-            'bio': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
-            'linkedin_url': forms.URLInput(attrs={'class': 'form-control', 'placeholder': 'https://linkedin.com/in/yourprofile'}),
-            'github_url': forms.URLInput(attrs={'class': 'form-control', 'placeholder': 'https://github.com/yourusername'}),
+            'resume': forms.FileInput(attrs={'class': 'form-control'}),
         }
 
 class CertificationForm(forms.ModelForm):

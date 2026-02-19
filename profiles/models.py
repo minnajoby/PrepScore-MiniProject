@@ -6,21 +6,18 @@ from django.contrib.auth.models import User # Import Django's built-in User
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     profile_picture = models.CharField(max_length=255, default='images/avatar1.jpg')
-    bio = models.TextField(blank=True)
-    linkedin_url = models.URLField(max_length=255, blank=True)
-    github_url = models.URLField(max_length=255, blank=True)
-    headline = models.CharField(max_length=255, blank=True)
     location = models.CharField(max_length=255, blank=True)
+    resume = models.FileField(upload_to='resumes/', null=True, blank=True)
+
+    # AI Engine Features
+    num_projects = models.IntegerField(default=0)
+    num_skills = models.IntegerField(default=0)
+    num_experiences = models.IntegerField(default=0)
+    num_educations = models.IntegerField(default=0)
+    num_certifications = models.IntegerField(default=0)
+
     def __str__(self):
         return self.user.username
-
-class Education(models.Model):
-    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    degree = models.CharField(max_length=200)
-    institution = models.CharField(max_length=200)
-    year_of_completion = models.IntegerField()
-    def __str__(self):
-        return self.degree
 
 class Skill(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
