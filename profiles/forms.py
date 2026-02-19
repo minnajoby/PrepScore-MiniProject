@@ -42,12 +42,12 @@ class ExperienceForm(forms.ModelForm):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['location', 'resume']
+        fields = ['location', 'resume_pdf']
         
         # This is the key. We tell Django what classes to add to the HTML.
         widgets = {
             'location': forms.TextInput(attrs={'class': 'form-control'}),
-            'resume': forms.FileInput(attrs={'class': 'form-control'}),
+            'resume_pdf': forms.FileInput(attrs={'class': 'form-control'}),
         }
 
 class CertificationForm(forms.ModelForm):

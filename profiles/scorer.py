@@ -25,7 +25,7 @@ def get_score_contributions(profile):
 
     # Score Core Profile Details
     # (Bio, Headline, Sites removed for AI optimization)
-    if profile.resume: contributions["Profile Details"] += 20 # Bonus for resume?
+    if profile.resume_pdf: contributions["Profile Details"] += 20 # Bonus for resume?
 
     # Score other sections
     contributions["Education"] = profile.num_educations * BASE_POINTS['education']

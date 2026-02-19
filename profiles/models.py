@@ -7,7 +7,7 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     profile_picture = models.CharField(max_length=255, default='images/avatar1.jpg')
     location = models.CharField(max_length=255, blank=True)
-    resume = models.FileField(upload_to='resumes/', null=True, blank=True)
+    resume_pdf = models.FileField(upload_to='resumes/', null=True, blank=True)
 
     # AI Engine Features
     num_projects = models.IntegerField(default=0)
