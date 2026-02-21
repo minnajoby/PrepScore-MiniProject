@@ -1,1 +1,144 @@
- 
+import json
+import google.generativeai as genai
+from django.conf import settings
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from profiles.models import Profile
+from profiles.scorer import calculate_ml_score
+from .models import ResumeAnalysis, GapAnalysisResult
+from .utils import extract_text_from_pdf, generate_embedding, compute_similarity
+
+genai.configure(api_key=settings.GEMINI_API_KEY)
+
+
+@login_required
+def process_resume_view(request):
+    """
+    Step 1 of the pipeline:
+    Extract text from uploaded PDF → generate Gemini embedding → save to DB.
+    """
+    profile = Profile.objects.get(user=request.user)
+
+    if not profile.resume_pdf:
+        messages.error(request, "Please upload your resume PDF first from Manage Profile.")
+        return redirect('manage_profile')
+
+    extracted_text = extract_text_from_pdf(profile.resume_pdf.path)
+
+    if not extracted_text:
+        messages.error(request, "Could not read your PDF. Make sure it is not a scanned image.")
+        return redirect('manage_profile')
+
+    embedding = generate_embedding(extracted_text[:8000])
+
+    if not embedding:
+        messages.error(request, "Embedding generation failed. Check your Gemini API key.")
+        return redirect('manage_profile')
+
+    analysis, created = ResumeAnalysis.objects.get_or_create(user=request.user)
+    analysis.extracted_text = extracted_text
+    analysis.embedding = embedding
+    analysis.save()
+
+    messages.success(request, "✅ Resume processed successfully! Now try the Gap Analysis.")
+    return redirect('gap_analysis')
+
+
+@login_required
+def gap_analysis_view(request):
+    """
+    Hybrid Score = (Random Forest Score × 0.6) + (Vector Similarity × 0.4)
+    """
+    result = None
+    past_results = GapAnalysisResult.objects.filter(user=request.user)[:3]
+
+    try:
+        resume_analysis = ResumeAnalysis.objects.get(user=request.user)
+        resume_ready = bool(resume_analysis.extracted_text)
+    except ResumeAnalysis.DoesNotExist:
+        resume_analysis = None
+        resume_ready = False
+
+    if request.method == 'POST':
+        job_description = request.POST.get('job_description', '').strip()
+
+        if not job_description:
+            messages.error(request, "Please paste a Job Description.")
+            return redirect('gap_analysis')
+
+        if not resume_ready:
+            messages.error(request, "Please process your resume first.")
+            return redirect('process_resume')
+
+        # Track A: Random Forest base score
+        profile = Profile.objects.get(user=request.user)
+        rf_score = calculate_ml_score(profile)
+
+        # Track B: Vector cosine similarity
+        jd_embedding = generate_embedding(job_description[:8000])
+        similarity = compute_similarity(resume_analysis.embedding, jd_embedding)
+        vector_score = similarity * 100
+
+        # Final Hybrid Score
+        final_score = round((rf_score * 0.6) + (vector_score * 0.4))
+
+        # Gemini Gap Analysis
+        prompt = f"""
+You are a Senior Hiring Manager reviewing a candidate's resume against a Job Description.
+
+CANDIDATE RESUME:
+{resume_analysis.extracted_text[:3000]}
+
+JOB DESCRIPTION:
+{job_description[:2000]}
+
+Respond ONLY in this exact JSON format, no extra text outside the JSON:
+{{
+    "missing_skills": ["skill1", "skill2", "skill3"],
+    "interview_questions": [
+        "Interview question 1 targeting their weak area?",
+        "Interview question 2 targeting their weak area?"
+    ],
+    "summary": "One sentence summary of how well this candidate fits the role."
+}}
+"""
+        try:
+            model = genai.GenerativeModel('gemini-1.5-flash')
+            response = model.generate_content(prompt)
+            response_text = response.text.strip()
+
+            if response_text.startswith('```'):
+                response_text = response_text.split('```')[1]
+                if response_text.startswith('json'):
+                    response_text = response_text[4:]
+
+            ai_data = json.loads(response_text)
+
+            GapAnalysisResult.objects.create(
+                user=request.user,
+                job_description=job_description,
+                match_score=final_score,
+                missing_skills=ai_data.get('missing_skills', []),
+                interview_questions=ai_data.get('interview_questions', []),
+                summary=ai_data.get('summary', ''),
+            )
+
+            result = {
+                'rf_score': rf_score,
+                'vector_score': round(vector_score),
+                'match_score': final_score,
+                'missing_skills': ai_data.get('missing_skills', []),
+                'interview_questions': ai_data.get('interview_questions', []),
+                'summary': ai_data.get('summary', ''),
+            }
+
+        except Exception as e:
+            messages.error(request, f"AI Analysis failed: {str(e)}")
+
+    context = {
+        'result': result,
+        'past_results': past_results,
+        'resume_ready': resume_ready,
+    }
+    return render(request, 'ai_engine/gap_analysis.html', context) 
