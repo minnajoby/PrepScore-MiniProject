@@ -3,10 +3,7 @@ import os
 import joblib
 import random
 from django.conf import settings
-
-# --- IMPORTS ---
 from .models import Profile, Skill, Experience, Certification
-from .ml_model.features import profile_to_vector
 from .config import SKILL_SCORES, DEFAULT_SKILL_SCORE, BASE_POINTS
 
 
