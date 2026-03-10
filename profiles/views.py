@@ -171,12 +171,40 @@ def manage_profile_view(request):
     profile, created = Profile.objects.get_or_create(user=request.user)
 
     if request.method == 'POST':
+        # Check if a new file is actually being uploaded
+        new_resume_uploaded = 'resume_pdf' in request.FILES
+
         # Populate the form with submitted data AND the existing profile instance
         form = ProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             form.save()
-            messages.success(request, "Your profile has been updated successfully!")
-            return redirect('process_resume')
+            
+            # If a new PDF was uploaded, process it for AI Gap Analysis right now
+            if new_resume_uploaded and profile.resume_pdf:
+                try:
+                    from ai_engine.models import ResumeAnalysis
+                    from ai_engine.utils import extract_text_from_pdf, generate_embedding
+                    
+                    extracted_text = extract_text_from_pdf(profile.resume_pdf.path)
+                    if extracted_text:
+                        embedding = generate_embedding(extracted_text[:8000])
+                        if embedding:
+                            analysis, _ = ResumeAnalysis.objects.get_or_create(user=request.user)
+                            analysis.extracted_text = extracted_text
+                            analysis.embedding = embedding
+                            analysis.save()
+                            messages.success(request, "Profile updated and Resume processed for AI successfully!")
+                        else:
+                            messages.warning(request, "Profile updated, but we couldn't generate an AI embedding for your resume.")
+                    else:
+                        messages.warning(request, "Profile updated, but we couldn't read the text in your PDF.")
+                except Exception as e:
+                    messages.warning(request, f"Profile updated, but resume processing failed: {str(e)}")
+            else:
+                messages.success(request, "Your profile has been updated successfully!")
+
+            # Stay on the edit profile page
+            return redirect('manage_profile')
     else:
         # For a GET request, populate the form with the profile's current data
         form = ProfileForm(instance=profile)

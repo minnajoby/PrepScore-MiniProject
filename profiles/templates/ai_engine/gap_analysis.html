@@ -11,9 +11,13 @@
             </p>
         </div>
         {% if not resume_ready %}
-        <a href="{% url 'process_resume' %}" class="btn btn-warning">
-            ⚙️ Process My Resume First
-        </a>
+        <div class="alert alert-warning mb-4 d-flex justify-content-between align-items-center rounded-3">
+            <div><i class="bi bi-exclamation-triangle-fill me-2"></i> You must upload and process your resume before
+                running an analysis!</div>
+            <a href="{% url 'manage_profile' %}" class="btn btn-warning">
+                Upload Resume
+            </a>
+        </div>
         {% endif %}
     </div>
 

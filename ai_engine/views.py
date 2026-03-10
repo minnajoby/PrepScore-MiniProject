@@ -10,34 +10,6 @@ from .models import ResumeAnalysis, GapAnalysisResult
 from .utils import extract_text_from_pdf, generate_embedding, compute_similarity
 
 
-@login_required
-def process_resume_view(request):
-    profile = Profile.objects.get(user=request.user)
-
-    if not profile.resume_pdf:
-        messages.error(request, "Please upload your resume PDF first from Manage Profile.")
-        return redirect('manage_profile')
-
-    extracted_text = extract_text_from_pdf(profile.resume_pdf.path)
-
-    if not extracted_text:
-        messages.error(request, "Could not read your PDF. Make sure it is not a scanned image.")
-        return redirect('manage_profile')
-
-    embedding = generate_embedding(extracted_text[:8000])
-
-    if not embedding:
-        messages.error(request, "Embedding generation failed. Check your Gemini API key.")
-        return redirect('manage_profile')
-
-    analysis, created = ResumeAnalysis.objects.get_or_create(user=request.user)
-    analysis.extracted_text = extracted_text
-    analysis.embedding = embedding
-    analysis.save()
-
-    messages.success(request, "Resume processed successfully! Now try the Gap Analysis.")
-    return redirect('gap_analysis')
-
 
 @login_required
 def gap_analysis_view(request):
@@ -59,8 +31,8 @@ def gap_analysis_view(request):
             return redirect('gap_analysis')
 
         if not resume_ready:
-            messages.error(request, "Please process your resume first.")
-            return redirect('process_resume')
+            messages.error(request, "Please upload your resume in the Profile section first.")
+            return redirect('manage_profile')
 
         profile = Profile.objects.get(user=request.user)
         rf_score = calculate_ml_score(profile)
