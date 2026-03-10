@@ -25,16 +25,20 @@
 
     <div class="card mb-4 shadow-sm">
         <div class="card-body">
-            <form method="POST">
+            <form method="POST" id="aiForm">
                 {% csrf_token %}
                 <div class="mb-3">
                     <label class="form-label fw-bold">Paste Job Description</label>
                     <textarea name="job_description" class="form-control" rows="8"
                         placeholder="Paste the full job description here..."></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary btn-lg" {% if not resume_ready %}disabled
+                <button type="submit" id="analyzeBtn" class="btn btn-primary btn-lg" {% if not resume_ready %}disabled
                     title="Process your resume first" {% endif %}>
                     🤖 Analyze with AI
+                </button>
+                <button class="btn btn-primary btn-lg d-none" id="loadingBtn" type="button" disabled>
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    Analyzing Profile... Please wait...
                 </button>
             </form>
         </div>
@@ -123,4 +127,16 @@
     {% endif %}
 
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const aiForm = document.getElementById('aiForm');
+        if (aiForm) {
+            aiForm.addEventListener('submit', function () {
+                document.getElementById('analyzeBtn').classList.add('d-none');
+                document.getElementById('loadingBtn').classList.remove('d-none');
+            });
+        }
+    });
+</script>
 {% endblock %}

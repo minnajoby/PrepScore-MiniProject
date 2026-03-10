@@ -8,8 +8,8 @@
     /* --- DARK THEME STYLES FOR THE REGISTER PAGE --- */
 
     body {
-       background: conic-gradient(from -90deg at 10% 110%, #3498db, #1b263b 50%, #0d1b2a) !important;
-    background-attachment: fixed;
+        background: conic-gradient(from -90deg at 10% 110%, #3498db, #1b263b 50%, #0d1b2a) !important;
+        background-attachment: fixed;
     }
 
     .register-wrapper {
@@ -72,23 +72,39 @@
 
                     <!-- Username Field -->
                     <div class="mb-3">
-                        <input type="text" class="form-control" name="username" placeholder="Username" required>
+                        <input type="text" class="form-control {% if form.username.errors %}is-invalid{% endif %}"
+                            name="username" placeholder="Username" value="{{ form.username.value|default_if_none:'' }}"
+                            required>
+                        {% for error in form.username.errors %}
+                        <div class="invalid-feedback fw-bold">{{ error }}</div>
+                        {% endfor %}
                     </div>
 
                     <!-- Email Field -->
                     <div class="mb-3">
-                        <input type="email" class="form-control" name="email" placeholder="Email" required>
+                        <input type="email" class="form-control {% if form.email.errors %}is-invalid{% endif %}"
+                            name="email" placeholder="Email" value="{{ form.email.value|default_if_none:'' }}" required>
+                        {% for error in form.email.errors %}
+                        <div class="invalid-feedback fw-bold">{{ error }}</div>
+                        {% endfor %}
                     </div>
 
                     <!-- Password Field -->
                     <div class="mb-3">
-                        <input type="password" class="form-control" name="password1" placeholder="Password" required>
+                        <input type="password" class="form-control {% if form.password1.errors %}is-invalid{% endif %}"
+                            name="password1" placeholder="Password" required>
+                        {% for error in form.password1.errors %}
+                        <div class="invalid-feedback fw-bold">{{ error }}</div>
+                        {% endfor %}
                     </div>
 
                     <!-- Password Confirmation Field -->
                     <div class="mb-3">
-                        <input type="password" class="form-control" name="password2" placeholder="Password confirmation"
-                            required>
+                        <input type="password" class="form-control {% if form.password2.errors %}is-invalid{% endif %}"
+                            name="password2" placeholder="Password confirmation" required>
+                        {% for error in form.password2.errors %}
+                        <div class="invalid-feedback fw-bold">{{ error }}</div>
+                        {% endfor %}
                     </div>
 
                     <div class="d-grid mt-4">
