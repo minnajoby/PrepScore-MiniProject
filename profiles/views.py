@@ -34,11 +34,9 @@ def register_view(request):
             messages.success(request, f"Account created successfully! Welcome, {user.username}.")
             return redirect('dashboard')
         else:
-            # This is your existing error handling, it's good
-            for error_list in form.errors.values():
-                for error in error_list:
-                    messages.error(request, error)
-            return redirect('register')
+            # Instead of looping messages, just let the template render the form errors directly
+            messages.error(request, "Please correct the errors below.")
+            
     else:
         form = CustomUserCreationForm()
         
@@ -101,9 +99,6 @@ def add_skill_view(request):
             skill = form.save(commit=False)
             skill.profile = profile
             skill.save()
-            # Update cache count
-            profile.num_skills = Skill.objects.filter(profile=profile).count()
-            profile.save()
             messages.success(request, "Skill successfully added!")
             return redirect('dashboard')
     else:
@@ -119,9 +114,6 @@ def add_experience_view(request):
             experience = form.save(commit=False)
             experience.profile = profile
             experience.save()
-            # Update cache count
-            profile.num_experiences = Experience.objects.filter(profile=profile).count()
-            profile.save()
             messages.success(request, "Experience entry successfully added!")
             return redirect('dashboard')
     else:
@@ -190,10 +182,6 @@ def delete_skill_view(request, pk):
     skill = get_object_or_404(Skill, pk=pk, profile__user=request.user)
     if request.method == 'POST':
         skill.delete()
-        # Update cache count
-        profile = skill.profile
-        profile.num_skills = Skill.objects.filter(profile=profile).count()
-        profile.save()
         messages.info(request, "Skill has been deleted.")
         return redirect('dashboard')
     return render(request, 'profiles/confirm_delete.html', {'object': skill, 'type': 'Skill'})
@@ -203,10 +191,6 @@ def delete_experience_view(request, pk):
     experience = get_object_or_404(Experience, pk=pk, profile__user=request.user)
     if request.method == 'POST':
         experience.delete()
-        # Update cache count
-        profile = experience.profile
-        profile.num_experiences = Experience.objects.filter(profile=profile).count()
-        profile.save()
         messages.info(request, "Experience entry has been deleted.")
         return redirect('dashboard')
     return render(request, 'profiles/confirm_delete.html', {'object': experience, 'type': 'Experience Entry'})
@@ -222,7 +206,7 @@ def manage_profile_view(request):
         if form.is_valid():
             form.save()
             messages.success(request, "Your profile has been updated successfully!")
-            return redirect('dashboard') # Redirect back to the same page
+            return redirect('process_resume')
     else:
         # For a GET request, populate the form with the profile's current data
         form = ProfileForm(instance=profile)
@@ -239,9 +223,6 @@ def manage_skills_view(request):
             skill = form.save(commit=False)
             skill.profile = profile
             skill.save()
-            # Update cache
-            profile.num_skills = Skill.objects.filter(profile=profile).count()
-            profile.save()
             messages.success(request, "New skill successfully added!")
             return redirect('dashboard') # Redirect back to the same page
     else:
@@ -265,9 +246,6 @@ def manage_experience_view(request):
             experience = form.save(commit=False)
             experience.profile = profile
             experience.save()
-            # Update cache
-            profile.num_experiences = Experience.objects.filter(profile=profile).count()
-            profile.save()
             messages.success(request, "New experience entry successfully added!")
             return redirect('dashboard')
     else:
@@ -285,9 +263,6 @@ def manage_certifications_view(request):
             certification = form.save(commit=False)
             certification.profile = profile
             certification.save()
-            # Update cache
-            profile.num_certifications = Certification.objects.filter(profile=profile).count()
-            profile.save()
             messages.success(request, "New certification successfully added!")
             return redirect('dashboard')
     else:
@@ -324,10 +299,6 @@ def delete_certification_view(request, pk):
     certification = get_object_or_404(Certification, pk=pk, profile__user=request.user)
     if request.method == 'POST':
         certification.delete()
-        # Update cache
-        profile = certification.profile
-        profile.num_certifications = Certification.objects.filter(profile=profile).count()
-        profile.save()
         messages.info(request, "Certification has been deleted.")
         return redirect('manage_certifications')
     

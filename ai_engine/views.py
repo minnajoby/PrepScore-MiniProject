@@ -95,13 +95,9 @@ Respond ONLY in this exact JSON format, no extra text outside the JSON:
             chat_response = groq_client.chat.completions.create(
                 model="llama-3.1-8b-instant",
                 messages=[{"role": "user", "content": prompt}],
+                response_format={"type": "json_object"}
             )
             response_text = chat_response.choices[0].message.content.strip()
-
-            if response_text.startswith('```'):
-                response_text = response_text.split('```')[1]
-                if response_text.startswith('json'):
-                    response_text = response_text[4:]
 
             ai_data = json.loads(response_text)
 

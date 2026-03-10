@@ -91,7 +91,9 @@
                     <div class="d-flex justify-content-between mb-1"><span class="fw-bold">Skills</span><span
                             class="text-muted">{{ profile.num_skills }} / 10</span></div>
                     <div class="progress" style="height: 20px;">
-                        <div class="progress-bar bg-info" style="width: calc({{ skills.count }} * 10%)">{{ skills.count }}</div>
+                        <div class="progress-bar bg-info" style="width: calc({{ profile.num_skills }} * 10%)">{{
+                            profile.num_skills
+                            }}</div>
                     </div>
                 </div>
                 <div class="mb-3">
@@ -106,16 +108,17 @@
                     <div class="d-flex justify-content-between mb-1"><span class="fw-bold">Experience</span><span
                             class="text-muted">{{ profile.num_experiences }} / 4</span></div>
                     <div class="progress" style="height: 20px;">
-                        <div class="progress-bar bg-danger" style="width: calc({{ experiences.count }} * 25%)">{{
-                            experiences.count }}</div>
+                        <div class="progress-bar bg-danger" style="width: calc({{ profile.num_experiences }} * 25%)">{{
+                            profile.num_experiences }}</div>
                     </div>
                 </div>
                 <div>
                     <div class="d-flex justify-content-between mb-1"><span class="fw-bold">Certifications</span><span
                             class="text-muted">{{ profile.num_certifications }} / 4</span></div>
                     <div class="progress" style="height: 20px;">
-                        <div class="progress-bar bg-warning" style="width: calc({{ certifications.count }} * 25%)">{{
-                            certifications.count }}</div>
+                        <div class="progress-bar bg-warning"
+                            style="width: calc({{ profile.num_certifications }} * 25%)">{{
+                            profile.num_certifications }}</div>
                     </div>
                 </div>
             </div>

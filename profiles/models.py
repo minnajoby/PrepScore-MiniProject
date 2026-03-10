@@ -41,3 +41,25 @@ class Certification(models.Model):
 
     def __str__(self):
         return self.name
+
+# --- SIGNALS FOR AUTO-UPDATING PROFILE COUNTS ---
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
+
+@receiver([post_save, post_delete], sender=Skill)
+def update_skill_count(sender, instance, **kwargs):
+    profile = instance.profile
+    profile.num_skills = Skill.objects.filter(profile=profile).count()
+    profile.save(update_fields=['num_skills'])
+
+@receiver([post_save, post_delete], sender=Experience)
+def update_experience_count(sender, instance, **kwargs):
+    profile = instance.profile
+    profile.num_experiences = Experience.objects.filter(profile=profile).count()
+    profile.save(update_fields=['num_experiences'])
+
+@receiver([post_save, post_delete], sender=Certification)
+def update_certification_count(sender, instance, **kwargs):
+    profile = instance.profile
+    profile.num_certifications = Certification.objects.filter(profile=profile).count()
+    profile.save(update_fields=['num_certifications'])
