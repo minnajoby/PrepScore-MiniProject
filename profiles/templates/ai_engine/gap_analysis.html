@@ -1,135 +1,234 @@
 {% extends "profiles/dashboard_base.html" %}
 
 {% block dashboard_content %}
-<div class="container mt-4">
+<div class="container-fluid mt-2">
 
-    <div class="d-flex justify-content-between align-items-center mb-3">
+    <!-- PAGE HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h2>🎯 AI Gap Analysis</h2>
-            <p class="text-muted mb-0">
-                Paste a Job Description to get your Hybrid Match Score and AI-powered feedback.
+            <h2 class="fw-bold mb-1"><i class="bi bi-robot text-primary me-2"></i>AI Gap Analysis</h2>
+            <p class="text-muted mb-0">Compare your profile against actual job descriptions to reveal missing keywords.
             </p>
         </div>
+
+        <!-- BLOCKER WARNING IF NO RESUME -->
         {% if not resume_ready %}
-        <div class="alert alert-warning mb-4 d-flex justify-content-between align-items-center rounded-3">
-            <div><i class="bi bi-exclamation-triangle-fill me-2"></i> You must upload and process your resume before
-                running an analysis!</div>
-            <a href="{% url 'manage_profile' %}" class="btn btn-warning">
-                Upload Resume
+        <div class="alert alert-warning mb-0 d-flex align-items-center py-2 px-3 rounded-pill shadow-sm">
+            <i class="bi bi-exclamation-triangle-fill fs-5 me-3"></i>
+            <span class="me-3 fw-bold small">Resume required for analysis!</span>
+            <a href="{% url 'manage_profile' %}" class="btn btn-warning btn-sm fw-bold rounded-pill px-3">
+                Upload Now
             </a>
         </div>
         {% endif %}
     </div>
 
+    <!-- ERROR MESSAGES -->
     {% if messages %}
     {% for message in messages %}
-    <div class="alert alert-danger">{{ message }}</div>
+    <div class="alert alert-danger shadow-sm border-0 rounded-3"><i class="bi bi-x-circle-fill me-2"></i>{{ message }}
+    </div>
     {% endfor %}
     {% endif %}
 
-    <div class="card mb-4 shadow-sm">
-        <div class="card-body">
-            <form method="POST" id="aiForm">
-                {% csrf_token %}
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Paste Job Description</label>
-                    <textarea name="job_description" class="form-control" rows="8"
-                        placeholder="Paste the full job description here..."></textarea>
+    <!-- 2-COLUMN APP LAYOUT -->
+    <div class="row g-4">
+
+        <!-- LEFT SIDEBAR: INPUT FORM & HISTORY (1/3 Width) -->
+        <div class="col-lg-4">
+
+            <!-- THE INPUT FORM CARD -->
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-header bg-white border-bottom p-3">
+                    <h5 class="mb-0 fw-bold fs-6 text-uppercase text-muted letter-spacing-1">
+                        <i class="bi bi-file-text-fill me-2 text-primary"></i>Target Role
+                    </h5>
                 </div>
-                <button type="submit" id="analyzeBtn" class="btn btn-primary btn-lg" {% if not resume_ready %}disabled
-                    title="Process your resume first" {% endif %}>
-                    🤖 Analyze with AI
-                </button>
-                <button class="btn btn-primary btn-lg d-none" id="loadingBtn" type="button" disabled>
-                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                    Analyzing Profile... Please wait...
-                </button>
-            </form>
-        </div>
-    </div>
+                <div class="card-body p-4">
+                    <form method="POST" id="aiForm">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small">Paste Job Description</label>
+                            <textarea name="job_description" class="form-control bg-light border-0 custom-focus"
+                                rows="10"
+                                placeholder="Paste the requirements, responsibilities, and qualifications here..."
+                                style="resize: none;"></textarea>
+                        </div>
 
-    {% if result %}
-    <div class="card border-primary shadow mb-4">
-        <div class="card-header bg-primary text-white">
-            <h4 class="mb-0">📊 Analysis Results</h4>
-        </div>
-        <div class="card-body">
+                        <button type="submit" id="analyzeBtn"
+                            class="btn btn-primary btn-lg w-100 fw-bold rounded-pill hover-lift shadow-sm" {% if not
+                            resume_ready %}disabled title="Process your resume first" {% endif %}>
+                            Analyze Profile Fit
+                        </button>
 
-            <div class="row text-center mb-4">
+                        <button class="btn btn-primary w-100 fw-bold rounded-pill d-none" id="loadingBtn" type="button"
+                            disabled>
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            Crunching Data...
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- PAST ANALYSES LOG -->
+            {% if past_results %}
+            <h6 class="fw-bold text-muted mb-3 text-uppercase small ps-1">Recent Analyses</h6>
+            <div class="d-flex flex-column gap-2">
+                {% for r in past_results %}
+                <div class="card border border-light shadow-sm rounded-3 hover-lift transition-all">
+                    <div class="card-body p-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span
+                                class="badge {% if r.match_score >= 70 %}bg-success{% elif r.match_score >= 50 %}bg-warning{% else %}bg-danger{% endif %} rounded-pill">
+                                {{ r.match_score }}% Match
+                            </span>
+                            <small class="text-muted" style="font-size: 0.75rem;">{{ r.created_at|date:"M d" }}</small>
+                        </div>
+                        <p class="mb-0 small text-truncate text-muted">Missing: {{ r.missing_skills|join:", " }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+        </div>
+
+        <!-- RIGHT MAIN AREA: DASHBOARD RESULTS (2/3 Width) -->
+        <div class="col-lg-8">
+
+            {% if result %}
+            <!-- RESULTS VIEW -->
+
+            <!-- TOP ROW: THE 3 SCORE METRICS -->
+            <div class="row g-3 mb-4">
+                <!-- ML Score -->
                 <div class="col-md-4">
-                    <div class="card bg-light">
-                        <div class="card-body">
-                            <h6 class="text-muted">🤖 ML Base Score</h6>
-                            <h2>{{ result.rf_score }}%</h2>
-                            <small class="text-muted">Random Forest × 0.6</small>
+                    <div class="card border-0 shadow-sm rounded-4 h-100 bg-white">
+                        <div class="card-body p-4 text-center d-flex flex-column justify-content-center">
+                            <h6 class="text-muted fw-bold text-uppercase small mb-1">Base ML Score</h6>
+                            <h2 class="display-5 fw-bold text-dark mb-1">{{ result.rf_score }}<span
+                                    class="fs-4 text-muted">%</span></h2>
+                            <small class="text-muted" style="font-size: 0.7rem;">Profile Strength Calculation</small>
                         </div>
                     </div>
                 </div>
+
+                <!-- Vector Score -->
                 <div class="col-md-4">
-                    <div class="card bg-light">
-                        <div class="card-body">
-                            <h6 class="text-muted">🔍 Semantic Match</h6>
-                            <h2>{{ result.vector_score }}%</h2>
-                            <small class="text-muted">Vector Similarity × 0.4</small>
+                    <div class="card border-0 shadow-sm rounded-4 h-100 bg-white">
+                        <div class="card-body p-4 text-center d-flex flex-column justify-content-center">
+                            <h6 class="text-muted fw-bold text-uppercase small mb-1">Semantic Match</h6>
+                            <h2 class="display-5 fw-bold text-dark mb-1">{{ result.vector_score }}<span
+                                    class="fs-4 text-muted">%</span></h2>
+                            <small class="text-muted" style="font-size: 0.7rem;">Keyword & Concept Overlap</small>
                         </div>
                     </div>
                 </div>
+
+                <!-- Final Hybrid Score (Highlighted) -->
                 <div class="col-md-4">
                     <div
-                        class="card {% if result.match_score >= 70 %}bg-success{% elif result.match_score >= 50 %}bg-warning{% else %}bg-danger{% endif %} text-white">
-                        <div class="card-body">
-                            <h6>⚡ Final Hybrid Score</h6>
-                            <h2>{{ result.match_score }}%</h2>
-                            <small>(ML × 0.6) + (Vector × 0.4)</small>
+                        class="card border-0 shadow rounded-4 h-100 {% if result.match_score >= 70 %}bg-success{% elif result.match_score >= 50 %}bg-warning{% else %}bg-danger{% endif %} text-white transform-scale position-relative overflow-hidden">
+                        <!-- Background decorative icon -->
+                        <i class="bi bi-lightning-charge-fill position-absolute text-white opacity-25"
+                            style="font-size: 8rem; right: -20px; bottom: -30px;"></i>
+                        <div
+                            class="card-body p-4 text-center d-flex flex-column justify-content-center position-relative z-1">
+                            <h6 class="fw-bold text-uppercase small mb-1 text-white-50">Overall Fit</h6>
+                            <h2 class="display-5 fw-bold mb-1">{{ result.match_score }}<span
+                                    class="fs-4 text-white-50">%</span></h2>
+                            <small class="text-white-50" style="font-size: 0.7rem;">Weighted Hybrid Algorithm</small>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <p class="fst-italic text-muted border-start border-primary ps-3">
-                "{{ result.summary }}"
-            </p>
-
-            <hr>
-
-            <div class="row">
-                <div class="col-md-6">
-                    <h5>❌ Missing Skills / Gaps</h5>
-                    <ul class="list-group">
-                        {% for skill in result.missing_skills %}
-                        <li class="list-group-item list-group-item-danger">{{ skill }}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-                <div class="col-md-6">
-                    <h5>❓ Likely Interview Questions</h5>
-                    <ol>
-                        {% for question in result.interview_questions %}
-                        <li class="mb-2">{{ question }}</li>
-                        {% endfor %}
-                    </ol>
+            <!-- AI SUMMARY CALLOUT -->
+            <div
+                class="card border-0 shadow-sm rounded-4 mb-4 bg-primary bg-opacity-10 border-start border-primary border-4">
+                <div class="card-body p-4">
+                    <div class="d-flex">
+                        <i class="bi bi-chat-quote-fill fs-2 text-primary me-3 mt-1"></i>
+                        <div>
+                            <h6 class="fw-bold text-primary mb-2">Executive Summary</h6>
+                            <p class="mb-0 text-dark" style="font-size: 1.05rem;">{{ result.summary }}</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-        </div>
-    </div>
-    {% endif %}
+            <!-- DETAILED BREAKDOWN LISTS -->
+            <div class="row g-4">
+                <!-- Missing Skills -->
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm rounded-4 h-100">
+                        <div class="card-header bg-white border-bottom p-3">
+                            <h6 class="mb-0 fw-bold text-danger"><i class="bi bi-x-circle-fill me-2"></i>Critical Gaps
+                                Detected</h6>
+                        </div>
+                        <div class="card-body p-0">
+                            <ul class="list-group list-group-flush rounded-bottom-4">
+                                {% for skill in result.missing_skills %}
+                                <li class="list-group-item d-flex align-items-center p-3 border-light">
+                                    <span class="badge bg-danger bg-opacity-10 text-danger rounded-circle p-2 me-3"><i
+                                            class="bi bi-dash"></i></span>
+                                    <span class="fw-medium text-dark">{{ skill }}</span>
+                                </li>
+                                {% empty %}
+                                <li class="list-group-item text-center p-4 text-muted">
+                                    No critical skills missing. Excellent match!
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
 
-    {% if past_results %}
-    <h5>🕒 Recent Analyses</h5>
-    {% for r in past_results %}
-    <div class="card mb-2">
-        <div class="card-body d-flex justify-content-between">
-            <div>
-                <strong>Hybrid Score: {{ r.match_score }}%</strong>
-                <br><small class="text-muted">Missing: {{ r.missing_skills|join:", " }}</small>
+                <!-- Interview Questions -->
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm rounded-4 h-100">
+                        <div class="card-header bg-white border-bottom p-3">
+                            <h6 class="mb-0 fw-bold text-info text-darken"><i
+                                    class="bi bi-question-circle-fill me-2"></i>Prep Questions</h6>
+                        </div>
+                        <div class="card-body p-0">
+                            <ul class="list-group list-group-flush rounded-bottom-4">
+                                {% for question in result.interview_questions %}
+                                <li class="list-group-item d-flex p-3 border-light">
+                                    <i class="bi bi-mic text-info mt-1 me-3"></i>
+                                    <span class="small text-dark">{{ question }}</span>
+                                </li>
+                                {% empty %}
+                                <li class="list-group-item text-center p-4 text-muted">
+                                    No specific questions generated.
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <small class="text-muted">{{ r.created_at|date:"M d, Y" }}</small>
+
+            {% else %}
+            <!-- EMPTY STATE (Waiting for Input) -->
+            <div class="card border-0 shadow-sm rounded-4 h-100 d-flex align-items-center justify-content-center text-center p-5 bg-light bg-opacity-50"
+                style="min-height: 500px;">
+                <div>
+                    <div class="bg-white rounded-circle shadow-sm d-inline-flex align-items-center justify-content-center mb-4"
+                        style="width: 100px; height: 100px;">
+                        <i class="bi bi-clipboard-data text-primary opacity-50" style="font-size: 3rem;"></i>
+                    </div>
+                    <h4 class="fw-bold text-dark mb-2">Awaiting Job Description</h4>
+                    <p class="text-muted mx-auto" style="max-width: 400px;">
+                        Paste a target job description into the panel on the left. The PrepScore Engine will extract
+                        entities, vector embeddings, and semantic overlaps to generate a personalized fit report!
+                    </p>
+                </div>
+            </div>
+            {% endif %}
+
         </div>
     </div>
-    {% endfor %}
-    {% endif %}
-
 </div>
 
 <script>
