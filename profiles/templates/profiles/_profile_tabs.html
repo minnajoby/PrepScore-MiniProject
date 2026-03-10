@@ -1,0 +1,27 @@
+<!-- profiles/templates/profiles/_profile_tabs.html -->
+<ul class="nav nav-tabs fw-bold mb-4">
+    <li class="nav-item">
+        <a class="nav-link {% if request.resolver_match.url_name == 'manage_profile' %}active{% endif %}"
+            href="{% url 'manage_profile' %}">
+            <i class="bi bi-person-fill me-1"></i>Basic Info
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if request.resolver_match.url_name == 'manage_experience' %}active{% endif %}"
+            href="{% url 'manage_experience' %}">
+            <i class="bi bi-briefcase-fill me-1"></i>Experience
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if request.resolver_match.url_name == 'manage_skills' %}active{% endif %}"
+            href="{% url 'manage_skills' %}">
+            <i class="bi bi-tools me-1"></i>Skills
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if request.resolver_match.url_name == 'manage_certifications' %}active{% endif %}"
+            href="{% url 'manage_certifications' %}">
+            <i class="bi bi-patch-check-fill me-1"></i>Certifications
+        </a>
+    </li>
+</ul>

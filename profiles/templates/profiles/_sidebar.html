@@ -17,29 +17,14 @@
         </a>
     </li>
     <li class="nav-item">
-        <a class="nav-link {% if request.path == '/profile/' %}active{% endif %}" href="{% url 'manage_profile' %}">
-            <i class="bi bi-person-fill me-2"></i>Profile
+        <a class="nav-link {% if request.resolver_match.url_name == 'manage_profile' or request.resolver_match.url_name == 'manage_skills' or request.resolver_match.url_name == 'manage_experience' or request.resolver_match.url_name == 'manage_certifications' %}active{% endif %}"
+            href="{% url 'manage_profile' %}">
+            <i class="bi bi-person-lines-fill me-2"></i>Edit Profile
         </a>
     </li>
     <li class="nav-item">
         <a class="nav-link {% if 'gap-analysis' in request.path %}active{% endif %}" href="{% url 'gap_analysis' %}">
             <i class="bi bi-robot me-2"></i>AI Gap Analysis
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link {% if 'skill' in request.path %}active{% endif %}" href="{% url 'manage_skills' %}">
-            <i class="bi bi-gear-fill me-2"></i>Skills
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link {% if 'experience' in request.path %}active{% endif %}" href="{% url 'manage_experience' %}">
-            <i class="bi bi-briefcase-fill me-2"></i>Work Experience
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link {% if 'certifications' in request.path %}active{% endif %}"
-            href="{% url 'manage_certifications' %}">
-            <i class="bi bi-patch-check-fill me-2"></i>Certifications
         </a>
     </li>
 </ul>

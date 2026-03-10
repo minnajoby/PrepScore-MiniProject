@@ -90,36 +90,6 @@ def dashboard_view(request):
     }
     return render(request, 'profiles/dashboard.html', context)
 
-@login_required
-def add_skill_view(request):
-    profile, created = Profile.objects.get_or_create(user=request.user)
-    if request.method == 'POST':
-        form = SkillForm(request.POST)
-        if form.is_valid():
-            skill = form.save(commit=False)
-            skill.profile = profile
-            skill.save()
-            messages.success(request, "Skill successfully added!")
-            return redirect('dashboard')
-    else:
-        form = SkillForm()
-    return render(request, 'profiles/dark_form_template.html', {'form': form, 'form_title': 'Add Skill', 'submit_button_text': 'Add Skill'})
-
-@login_required
-def add_experience_view(request):
-    profile, created = Profile.objects.get_or_create(user=request.user)
-    if request.method == 'POST':
-        form = ExperienceForm(request.POST)
-        if form.is_valid():
-            experience = form.save(commit=False)
-            experience.profile = profile
-            experience.save()
-            messages.success(request, "Experience entry successfully added!")
-            return redirect('dashboard')
-    else:
-        form = ExperienceForm()
-        return render(request, 'profiles/dark_form_template.html', {'form': form, 'form_title': 'Add Experience', 'submit_button_text': 'Add Experience'})
-
 # --- UPDATE VIEWS ---
 
 @login_required

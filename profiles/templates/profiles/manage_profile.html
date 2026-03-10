@@ -20,6 +20,7 @@
 
     <!-- Card Body -->
     <div class="card-body p-4">
+        {% include 'profiles/_profile_tabs.html' %}
         {% if messages %}
         {% for message in messages %}
         <div class="alert alert-success">{{ message }}</div>
