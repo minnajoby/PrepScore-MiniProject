@@ -5,7 +5,7 @@ from pgvector.django import VectorField
 class ResumeAnalysis(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     extracted_text = models.TextField(blank=True)
-    embedding = VectorField(dimensions=768, null=True, blank=True)
+    embedding = VectorField(dimensions=3072, null=True, blank=True)
     last_analyzed = models.DateTimeField(auto_now=True)
 
     def __str__(self):

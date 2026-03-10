@@ -1,0 +1,126 @@
+{% extends "profiles/dashboard_base.html" %}
+
+{% block dashboard_content %}
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h2>🎯 AI Gap Analysis</h2>
+            <p class="text-muted mb-0">
+                Paste a Job Description to get your Hybrid Match Score and AI-powered feedback.
+            </p>
+        </div>
+        {% if not resume_ready %}
+        <a href="{% url 'process_resume' %}" class="btn btn-warning">
+            ⚙️ Process My Resume First
+        </a>
+        {% endif %}
+    </div>
+
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-danger">{{ message }}</div>
+    {% endfor %}
+    {% endif %}
+
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+            <form method="POST">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Paste Job Description</label>
+                    <textarea name="job_description" class="form-control" rows="8"
+                        placeholder="Paste the full job description here..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg" {% if not resume_ready %}disabled
+                    title="Process your resume first" {% endif %}>
+                    🤖 Analyze with AI
+                </button>
+            </form>
+        </div>
+    </div>
+
+    {% if result %}
+    <div class="card border-primary shadow mb-4">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">📊 Analysis Results</h4>
+        </div>
+        <div class="card-body">
+
+            <div class="row text-center mb-4">
+                <div class="col-md-4">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h6 class="text-muted">🤖 ML Base Score</h6>
+                            <h2>{{ result.rf_score }}%</h2>
+                            <small class="text-muted">Random Forest × 0.6</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h6 class="text-muted">🔍 Semantic Match</h6>
+                            <h2>{{ result.vector_score }}%</h2>
+                            <small class="text-muted">Vector Similarity × 0.4</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div
+                        class="card {% if result.match_score >= 70 %}bg-success{% elif result.match_score >= 50 %}bg-warning{% else %}bg-danger{% endif %} text-white">
+                        <div class="card-body">
+                            <h6>⚡ Final Hybrid Score</h6>
+                            <h2>{{ result.match_score }}%</h2>
+                            <small>(ML × 0.6) + (Vector × 0.4)</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <p class="fst-italic text-muted border-start border-primary ps-3">
+                "{{ result.summary }}"
+            </p>
+
+            <hr>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>❌ Missing Skills / Gaps</h5>
+                    <ul class="list-group">
+                        {% for skill in result.missing_skills %}
+                        <li class="list-group-item list-group-item-danger">{{ skill }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h5>❓ Likely Interview Questions</h5>
+                    <ol>
+                        {% for question in result.interview_questions %}
+                        <li class="mb-2">{{ question }}</li>
+                        {% endfor %}
+                    </ol>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    {% endif %}
+
+    {% if past_results %}
+    <h5>🕒 Recent Analyses</h5>
+    {% for r in past_results %}
+    <div class="card mb-2">
+        <div class="card-body d-flex justify-content-between">
+            <div>
+                <strong>Hybrid Score: {{ r.match_score }}%</strong>
+                <br><small class="text-muted">Missing: {{ r.missing_skills|join:", " }}</small>
+            </div>
+            <small class="text-muted">{{ r.created_at|date:"M d, Y" }}</small>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+</div>
+{% endblock %}

@@ -65,16 +65,7 @@ def calculate_rule_based_score(profile):
     return min(final_score, 100)
 
 
-# --- 2. THE LIVE MACHINE LEARNING SCORER ---
-
-try:
-    model_path = os.path.join(settings.BASE_DIR, 'profiles', 'ml_model', 'prepscore_ml_model.pkl')
-    PREPSCORE_MODEL = joblib.load(model_path)
-    print("--- Machine Learning model loaded successfully! ---")
-except FileNotFoundError:
-    PREPSCORE_MODEL = None
-    print("--- WARNING: Machine Learning model file not found. Live scoring will default to 0. ---")
-
+PREPSCORE_MODEL = None
 def calculate_ml_score(profile):
     """
     Calculates the live PrepScore using the ML model.

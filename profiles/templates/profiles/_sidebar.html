@@ -22,8 +22,8 @@
         </a>
     </li>
     <li class="nav-item">
-        <a class="nav-link {% if 'education' in request.path %}active{% endif %}" href="{% url 'manage_education' %}">
-            <i class="bi bi-mortarboard-fill me-2"></i>Education
+        <a class="nav-link {% if 'gap-analysis' in request.path %}active{% endif %}" href="{% url 'gap_analysis' %}">
+            <i class="bi bi-robot me-2"></i>AI Gap Analysis
         </a>
     </li>
     <li class="nav-item">
@@ -37,7 +37,8 @@
         </a>
     </li>
     <li class="nav-item">
-        <a class="nav-link {% if 'certifications' in request.path %}active{% endif %}" href="{% url 'manage_certifications' %}">
+        <a class="nav-link {% if 'certifications' in request.path %}active{% endif %}"
+            href="{% url 'manage_certifications' %}">
             <i class="bi bi-patch-check-fill me-2"></i>Certifications
         </a>
     </li>

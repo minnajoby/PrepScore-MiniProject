@@ -1,5 +1,5 @@
 import json
-import google.generativeai as genai
+from groq import Groq
 from django.conf import settings
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
@@ -9,15 +9,9 @@ from profiles.scorer import calculate_ml_score
 from .models import ResumeAnalysis, GapAnalysisResult
 from .utils import extract_text_from_pdf, generate_embedding, compute_similarity
 
-genai.configure(api_key=settings.GEMINI_API_KEY)
-
 
 @login_required
 def process_resume_view(request):
-    """
-    Step 1 of the pipeline:
-    Extract text from uploaded PDF → generate Gemini embedding → save to DB.
-    """
     profile = Profile.objects.get(user=request.user)
 
     if not profile.resume_pdf:
@@ -41,15 +35,12 @@ def process_resume_view(request):
     analysis.embedding = embedding
     analysis.save()
 
-    messages.success(request, "✅ Resume processed successfully! Now try the Gap Analysis.")
+    messages.success(request, "Resume processed successfully! Now try the Gap Analysis.")
     return redirect('gap_analysis')
 
 
 @login_required
 def gap_analysis_view(request):
-    """
-    Hybrid Score = (Random Forest Score × 0.6) + (Vector Similarity × 0.4)
-    """
     result = None
     past_results = GapAnalysisResult.objects.filter(user=request.user)[:3]
 
@@ -71,19 +62,15 @@ def gap_analysis_view(request):
             messages.error(request, "Please process your resume first.")
             return redirect('process_resume')
 
-        # Track A: Random Forest base score
         profile = Profile.objects.get(user=request.user)
         rf_score = calculate_ml_score(profile)
 
-        # Track B: Vector cosine similarity
         jd_embedding = generate_embedding(job_description[:8000])
         similarity = compute_similarity(resume_analysis.embedding, jd_embedding)
         vector_score = similarity * 100
 
-        # Final Hybrid Score
         final_score = round((rf_score * 0.6) + (vector_score * 0.4))
 
-        # Gemini Gap Analysis
         prompt = f"""
 You are a Senior Hiring Manager reviewing a candidate's resume against a Job Description.
 
@@ -104,9 +91,12 @@ Respond ONLY in this exact JSON format, no extra text outside the JSON:
 }}
 """
         try:
-            model = genai.GenerativeModel('gemini-1.5-flash')
-            response = model.generate_content(prompt)
-            response_text = response.text.strip()
+            groq_client = Groq(api_key=settings.GROQ_API_KEY)
+            chat_response = groq_client.chat.completions.create(
+                model="llama-3.1-8b-instant",
+                messages=[{"role": "user", "content": prompt}],
+            )
+            response_text = chat_response.choices[0].message.content.strip()
 
             if response_text.startswith('```'):
                 response_text = response_text.split('```')[1]
@@ -141,4 +131,4 @@ Respond ONLY in this exact JSON format, no extra text outside the JSON:
         'past_results': past_results,
         'resume_ready': resume_ready,
     }
-    return render(request, 'ai_engine/gap_analysis.html', context) 
+    return render(request, 'ai_engine/gap_analysis.html', context)
