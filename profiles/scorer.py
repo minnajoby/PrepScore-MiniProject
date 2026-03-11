@@ -28,6 +28,7 @@ def get_score_contributions(profile):
     contributions["Education"] = profile.num_educations * BASE_POINTS['education']
     contributions["Experience"] = profile.num_experiences * BASE_POINTS['experience']
     contributions["Certifications"] = profile.num_certifications * BASE_POINTS['certification']
+    contributions["Projects"] = profile.num_projects * BASE_POINTS.get('project', 15)
 
     # Balanced skill scoring
     for skill in profile.skill_set.all():
@@ -49,7 +50,8 @@ def calculate_rule_based_score(profile):
         (10 * 5) + # Approx. score for 10 skills
         (2 * BASE_POINTS['education']) +
         (3 * BASE_POINTS['experience']) +
-        (2 * BASE_POINTS['certification'])
+        (2 * BASE_POINTS['certification']) +
+        (3 * BASE_POINTS.get('project', 15))
     )
     
     # Get the user's current raw score
@@ -112,6 +114,7 @@ def get_suggestions(profile, score):
     skill_names = {skill.name.lower() for skill in Skill.objects.filter(profile=profile)}
     
     if num_experiences == 0: suggestions.append({ "priority": 1, "text": "Gaining practical experience through an internship or personal project is the most impactful way to boost your score." })
+    if profile.num_projects == 0: suggestions.append({ "priority": 1.5, "text": "Showcase your practical skills by adding your key technical projects." })
     if profile.num_educations == 0: suggestions.append({ "priority": 3, "text": "Add your academic background to build a more complete profile and boost your score." })
     
     missing_keywords = [k for k in SKILL_SCORES.keys() if k not in skill_names]

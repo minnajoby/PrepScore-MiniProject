@@ -104,30 +104,37 @@
             </div>
 
             <!-- Middle: Quick Stats Grid -->
-            <div class="col-lg-5">
+            <div class="col-lg-6">
                 <div class="row g-3">
-                    <div class="col-6">
+                    <div class="col-md-4 col-6">
                         <div class="stat-pill">
                             <i class="bi bi-briefcase text-primary fs-3 mb-2 d-block"></i>
                             <h3 class="fw-bold mb-0">{{ profile.num_experiences }}</h3>
                             <span class="text-white-50 x-small">Experience</span>
                         </div>
                     </div>
-                    <div class="col-6">
+                    <div class="col-md-4 col-6">
                         <div class="stat-pill">
                             <i class="bi bi-tools text-info fs-3 mb-2 d-block"></i>
                             <h3 class="fw-bold mb-0">{{ profile.num_skills }}</h3>
                             <span class="text-white-50 x-small">Skills</span>
                         </div>
                     </div>
-                    <div class="col-6">
+                    <div class="col-md-4 col-6">
+                        <div class="stat-pill">
+                            <i class="bi bi-folder-fill text-primary-emphasis fs-3 mb-2 d-block"></i>
+                            <h3 class="fw-bold mb-0">{{ profile.num_projects }}</h3>
+                            <span class="text-white-50 x-small">Projects</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-6">
                         <div class="stat-pill">
                             <i class="bi bi-book text-success fs-3 mb-2 d-block"></i>
                             <h3 class="fw-bold mb-0">{{ profile.num_educations }}</h3>
                             <span class="text-white-50 x-small">Education</span>
                         </div>
                     </div>
-                    <div class="col-6">
+                    <div class="col-md-4 col-6">
                         <div class="stat-pill">
                             <i class="bi bi-award text-warning fs-3 mb-2 d-block"></i>
                             <h3 class="fw-bold mb-0">{{ profile.num_certifications }}</h3>
@@ -195,7 +202,7 @@
                                     style="width: {% widthratio profile.num_educations 3 100 %}%"></div>
                             </div>
                         </div>
-                        <div class="mb-0">
+                        <div class="mb-4">
                             <label class="d-flex justify-content-between text-white-50 small mb-1">
                                 <span>PROFESSIONAL CERTS</span>
                                 <span>{{ profile.num_certifications }}/4</span>
@@ -203,6 +210,16 @@
                             <div class="progress rounded-pill">
                                 <div class="progress-bar bg-warning"
                                     style="width: {% widthratio profile.num_certifications 4 100 %}%"></div>
+                            </div>
+                        </div>
+                        <div class="mb-0">
+                            <label class="d-flex justify-content-between text-white-50 small mb-1">
+                                <span>TECHNICAL PROJECTS</span>
+                                <span>{{ profile.num_projects }}/3</span>
+                            </label>
+                            <div class="progress rounded-pill">
+                                <div class="progress-bar bg-primary-emphasis"
+                                    style="width: {% widthratio profile.num_projects 3 100 %}%"></div>
                             </div>
                         </div>
                     </div>

@@ -87,7 +87,8 @@ def dashboard_view(request):
     context = {
         'profile': profile, 'skills': skills,
         'experiences': experiences, 'certifications': certifications,
-        'educations': Education.objects.filter(profile=profile), # Fetch education
+        'educations': Education.objects.filter(profile=profile),
+        'projects': Project.objects.filter(profile=profile),
         'score': score, 'suggestions': suggestions,
         'score_contributions': score_contributions,
     }
