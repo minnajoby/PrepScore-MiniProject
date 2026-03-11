@@ -1,0 +1,114 @@
+{% extends 'profiles/dashboard_base.html' %}
+{% load static %}
+
+{% block title %}Manage Projects{% endblock %}
+
+{% block dashboard_content %}
+<div class="card shadow-lg border-0 rounded-4">
+
+    <!-- Page Header -->
+    <div class="card-header bg-light border-bottom px-4 pt-4">
+        <h2 class="h3 mb-0">Edit Profile</h2>
+        <p class="text-muted mb-0 mt-1">Showcase your best projects to boost your PrepScore and attract recruiters.</p>
+    </div>
+
+    <div class="card-body p-4">
+        {% include 'profiles/_profile_tabs.html' %}
+
+        <div class="row g-5">
+            <!-- LEFT COLUMN: ADD NEW PROJECT FORM -->
+            <div class="col-lg-5">
+                <h4 class="mb-3 fw-bold">Add New Project</h4>
+
+                <form method="post" class="needs-validation" novalidate>
+                    {% csrf_token %}
+
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-sm-4">
+                            <label for="{{ form.title.id_for_label }}"
+                                class="col-form-label fw-bold small">Title</label>
+                        </div>
+                        <div class="col-sm-8">
+                            {{ form.title }}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-sm-4">
+                            <label for="{{ form.description.id_for_label }}"
+                                class="col-form-label fw-bold small">Description</label>
+                        </div>
+                        <div class="col-sm-8">
+                            {{ form.description }}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-sm-4">
+                            <label for="{{ form.technologies_used.id_for_label }}"
+                                class="col-form-label fw-bold small">Technologies</label>
+                        </div>
+                        <div class="col-sm-8">
+                            {{ form.technologies_used }}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-sm-4">
+                            <label for="{{ form.link.id_for_label }}" class="col-form-label fw-bold small">Link</label>
+                        </div>
+                        <div class="col-sm-8">
+                            {{ form.link }}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-8 offset-sm-4">
+                            <button type="submit" class="btn btn-primary fw-bold w-100 mt-2">Add Project</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- RIGHT COLUMN: LIST OF EXISTING PROJECTS -->
+            <div class="col-lg-7">
+                <h4 class="mb-3 fw-bold">Your Current Projects</h4>
+                <div class="list-group shadow-sm" style="max-height: 500px; overflow-y: auto; overflow-x: hidden;">
+                    {% for project in projects %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center p-3">
+                        <div>
+                            <strong class="d-block text-dark">{{ project.title }}</strong>
+                            <span class="text-primary small fw-bold">{{ project.technologies_used }}</span>
+                            {% if project.link %}
+                            <small class="text-muted d-block mt-1">
+                                <a href="{{ project.link }}" target="_blank" class="text-decoration-none">
+                                    <i class="bi bi-link-45deg me-1"></i>View Project
+                                </a>
+                            </small>
+                            {% endif %}
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'edit_project' pk=project.pk %}"
+                                class="btn btn-sm btn-outline-primary shadow-sm"><i class="bi bi-pencil-square"></i>
+                                Edit</a>
+                            <form action="{% url 'delete_project' pk=project.pk %}" method="POST" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-outline-danger shadow-sm"
+                                    onclick="return confirm('Delete this project?')"><i class="bi bi-trash"></i>
+                                    Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="list-group-item text-center p-5 text-muted bg-light rounded text-opacity-75">
+                        <i class="bi bi-folder-plus fs-1 text-secondary mb-2 d-block"></i>
+                        <h5 class="fw-bold text-dark">No Projects Yet</h5>
+                        <p class="mb-0">Showcase your technical skills with real-world examples. Add your best work!</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

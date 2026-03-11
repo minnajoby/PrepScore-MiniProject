@@ -21,4 +21,7 @@ urlpatterns = [
     path('education/', views.manage_education_view, name='manage_education'),
     path('education/<int:pk>/edit/', views.edit_education_view, name='edit_education'),
     path('education/<int:pk>/delete/', views.delete_education_view, name='delete_education'),
+    path('projects/', views.manage_projects_view, name='manage_projects'),
+    path('project/<int:pk>/edit/', views.edit_project_view, name='edit_project'),
+    path('project/<int:pk>/delete/', views.delete_project_view, name='delete_project'),
 ]

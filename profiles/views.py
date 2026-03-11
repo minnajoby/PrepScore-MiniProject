@@ -5,11 +5,13 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Profile, Skill, Experience, Certification, Education
-from .forms import ProfileForm, SkillForm, ExperienceForm, LoginForm, CertificationForm, EducationForm
+from .models import Profile, Skill, Experience, Certification, Education, Project
+from .forms import (
+    LoginForm, ProfileForm, SkillForm, ExperienceForm,
+    CertificationForm, CustomUserCreationForm, EducationForm, ProjectForm
+)
 from django.contrib.auth.views import PasswordResetConfirmView
 from django.urls import reverse_lazy
-from .forms import CustomUserCreationForm 
 from .scorer import calculate_ml_score, get_suggestions,get_score_contributions
 
 # --- VIEWS ---
@@ -346,9 +348,52 @@ def edit_education_view(request, pk):
 
 @login_required
 def delete_education_view(request, pk):
-    education = get_object_or_404(Education, pk=pk, profile__user=request.user)
-    if request.method == 'POST':
         education.delete()
         messages.info(request, "Education entry deleted.")
         return redirect('manage_education')
     return render(request, 'profiles/confirm_delete.html', {'object': education, 'type': 'Education Entry'})
+
+@login_required
+def manage_projects_view(request):
+    profile, created = Profile.objects.get_or_create(user=request.user)
+    if request.method == 'POST':
+        form = ProjectForm(request.POST)
+        if form.is_valid():
+            project = form.save(commit=False)
+            project.profile = profile
+            project.save()
+            messages.success(request, "New project successfully added!")
+            return redirect('manage_projects')
+    else:
+        form = ProjectForm()
+    projects = Project.objects.filter(profile=profile)
+    context = {'form': form, 'projects': projects}
+    return render(request, 'profiles/manage_projects.html', context)
+
+@login_required
+def edit_project_view(request, pk):
+    project = get_object_or_404(Project, pk=pk, profile__user=request.user)
+    if request.method == 'POST':
+        form = ProjectForm(request.POST, instance=project)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Project successfully updated!")
+            return redirect('manage_projects')
+    else:
+        form = ProjectForm(instance=project)
+    
+    context = {
+        'form': form,
+        'form_title': 'Edit Project',
+        'submit_button_text': 'Update'
+    }
+    return render(request, 'profiles/light_form_template.html', context)
+
+@login_required
+def delete_project_view(request, pk):
+    project = get_object_or_404(Project, pk=pk, profile__user=request.user)
+    if request.method == 'POST':
+        project.delete()
+        messages.info(request, "Project deleted.")
+        return redirect('manage_projects')
+    return render(request, 'profiles/confirm_delete.html', {'object': project, 'type': 'Project'})

@@ -35,6 +35,12 @@
         </a>
     </li>
     <li class="nav-item">
+        <a class="nav-link {% if request.resolver_match.url_name == 'manage_projects' %}active{% endif %}"
+            href="{% url 'manage_projects' %}">
+            <i class="bi bi-folder-fill me-2"></i>Projects
+        </a>
+    </li>
+    <li class="nav-item">
         <a class="nav-link {% if request.resolver_match.url_name == 'manage_education' %}active{% endif %}"
             href="{% url 'manage_education' %}">
             <i class="bi bi-book me-2"></i>Education
