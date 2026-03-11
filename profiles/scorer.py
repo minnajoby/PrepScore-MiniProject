@@ -66,6 +66,15 @@ def calculate_rule_based_score(profile):
 
 
 PREPSCORE_MODEL = None
+def profile_to_vector(profile):
+    """
+    Placeholder for future ML feature engineering.
+    Converts a profile instance into a numerical vector for the model.
+    """
+    # For now, just return a dummy vector if needed, 
+    # but the fallback handles None model anyway.
+    return []
+
 def calculate_ml_score(profile):
     """
     Calculates the live PrepScore using the ML model.
@@ -77,7 +86,9 @@ def calculate_ml_score(profile):
         profile.num_experiences > 0 or profile.num_certifications > 0
     )
     if not has_content: return 0
-    if PREPSCORE_MODEL is None: return 0
+    if PREPSCORE_MODEL is None: 
+        # Fallback to rule-based score if the model isn't trained yet
+        return calculate_rule_based_score(profile)
 
     feature_vector = profile_to_vector(profile)
     predicted_score = PREPSCORE_MODEL.predict(feature_vector)[0]
@@ -101,6 +112,7 @@ def get_suggestions(profile, score):
     skill_names = {skill.name.lower() for skill in Skill.objects.filter(profile=profile)}
     
     if num_experiences == 0: suggestions.append({ "priority": 1, "text": "Gaining practical experience through an internship or personal project is the most impactful way to boost your score." })
+    if profile.num_educations == 0: suggestions.append({ "priority": 3, "text": "Add your academic background to build a more complete profile and boost your score." })
     
     missing_keywords = [k for k in SKILL_SCORES.keys() if k not in skill_names]
     if missing_keywords: suggestions.append({ "priority": 2, "text": f"Consider learning a high-demand skill like '{random.choice(missing_keywords).title()}'." })

@@ -18,4 +18,7 @@ urlpatterns = [
     path('certifications/', views.manage_certifications_view, name='manage_certifications'),
     path('certification/<int:pk>/edit/', views.edit_certification_view, name='edit_certification'),
     path('certification/<int:pk>/delete/', views.delete_certification_view, name='delete_certification'),
+    path('education/', views.manage_education_view, name='manage_education'),
+    path('education/<int:pk>/edit/', views.edit_education_view, name='edit_education'),
+    path('education/<int:pk>/delete/', views.delete_education_view, name='delete_education'),
 ]

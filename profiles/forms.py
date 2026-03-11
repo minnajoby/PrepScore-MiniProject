@@ -1,7 +1,7 @@
 # In profiles/forms.py
 
 from django import forms
-from .models import Profile,Skill,Experience,Certification # Import the Skill model
+from .models import Profile, Skill, Experience, Certification, Education
 from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
@@ -63,5 +63,16 @@ class CertificationForm(forms.ModelForm):
             
             # This tells Django to render the date field as an HTML5 date input
             'date_issued': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+        }
+
+class EducationForm(forms.ModelForm):
+    class Meta:
+        model = Education
+        fields = ['school', 'degree', 'field_of_study', 'date_graduated']
+        widgets = {
+            'school': forms.TextInput(attrs={'class': 'form-control'}),
+            'degree': forms.TextInput(attrs={'class': 'form-control'}),
+            'field_of_study': forms.TextInput(attrs={'class': 'form-control'}),
+            'date_graduated': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
         }
     

@@ -29,9 +29,18 @@ def generate_embedding(text):
         return None
 
 def compute_similarity(embedding1, embedding2):
+    if embedding1 is None or embedding2 is None:
+        return 0.0
+    
     vec1 = np.array(embedding1)
     vec2 = np.array(embedding2)
-    cosine_sim = np.dot(vec1, vec2) / (
-        np.linalg.norm(vec1) * np.linalg.norm(vec2)
-    )
+    
+    # Zero vector check
+    norm1 = np.linalg.norm(vec1)
+    norm2 = np.linalg.norm(vec2)
+    
+    if norm1 == 0 or norm2 == 0:
+        return 0.0
+        
+    cosine_sim = np.dot(vec1, vec2) / (norm1 * norm2)
     return float(cosine_sim)

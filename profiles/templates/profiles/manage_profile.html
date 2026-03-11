@@ -21,19 +21,26 @@
     <!-- Card Body -->
     <div class="card-body p-4">
         {% include 'profiles/_profile_tabs.html' %}
-        {% if messages %}
-        {% for message in messages %}
-        <div class="alert alert-success">{{ message }}</div>
-        {% endfor %}
-        {% endif %}
-
         <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
 
             {% for field in form %}
             <div class="mb-3">
-                <label for="{{ field.id_for_label }}" class="form-label fw-bold">{{ field.label }}</label>
-                {{ field }} <!-- This will now be a standard input with a white background -->
+                <label for="{{ field.id_for_label }}" class="form-label fw-bold">
+                    {{ field.label }}
+                    {% if field.name == 'resume_pdf' and form.instance.resume_pdf %}
+                    <span class="fw-normal ms-2 small">
+                        (Current: <a href="{{ form.instance.resume_pdf.url }}" target="_blank"
+                            class="text-decoration-none">{{ form.instance.resume_pdf.name|safe }}</a>)
+                    </span>
+                    {% endif %}
+                </label>
+
+                {{ field }}
+
+                {% if field.help_text %}
+                <div class="form-text mt-1 text-muted small">{{ field.help_text }}</div>
+                {% endif %}
             </div>
             {% endfor %}
 

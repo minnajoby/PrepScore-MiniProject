@@ -5,8 +5,8 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Profile, Skill, Experience, Certification
-from .forms import ProfileForm,SkillForm, ExperienceForm,LoginForm, CertificationForm
+from .models import Profile, Skill, Experience, Certification, Education
+from .forms import ProfileForm, SkillForm, ExperienceForm, LoginForm, CertificationForm, EducationForm
 from django.contrib.auth.views import PasswordResetConfirmView
 from django.urls import reverse_lazy
 from .forms import CustomUserCreationForm 
@@ -85,6 +85,7 @@ def dashboard_view(request):
     context = {
         'profile': profile, 'skills': skills,
         'experiences': experiences, 'certifications': certifications,
+        'educations': Education.objects.filter(profile=profile), # Fetch education
         'score': score, 'suggestions': suggestions,
         'score_contributions': score_contributions,
     }
@@ -153,7 +154,7 @@ def delete_skill_view(request, pk):
     if request.method == 'POST':
         skill.delete()
         messages.info(request, "Skill has been deleted.")
-        return redirect('dashboard')
+        return redirect('manage_skills')
     return render(request, 'profiles/confirm_delete.html', {'object': skill, 'type': 'Skill'})
 
 @login_required
@@ -162,7 +163,7 @@ def delete_experience_view(request, pk):
     if request.method == 'POST':
         experience.delete()
         messages.info(request, "Experience entry has been deleted.")
-        return redirect('dashboard')
+        return redirect('manage_experience')
     return render(request, 'profiles/confirm_delete.html', {'object': experience, 'type': 'Experience Entry'})
 
 @login_required
@@ -182,17 +183,16 @@ def manage_profile_view(request):
             # If a new PDF was uploaded, process it for AI Gap Analysis right now
             if new_resume_uploaded and profile.resume_pdf:
                 try:
-                    from ai_engine.models import ResumeAnalysis
                     from ai_engine.utils import extract_text_from_pdf, generate_embedding
                     
                     extracted_text = extract_text_from_pdf(profile.resume_pdf.path)
                     if extracted_text:
                         embedding = generate_embedding(extracted_text[:8000])
                         if embedding:
-                            analysis, _ = ResumeAnalysis.objects.get_or_create(user=request.user)
-                            analysis.extracted_text = extracted_text
-                            analysis.embedding = embedding
-                            analysis.save()
+                            # Save directly to Profile model!
+                            profile.resume_text = extracted_text
+                            profile.resume_embedding = embedding
+                            profile.save()
                             messages.success(request, "Profile updated and Resume processed for AI successfully!")
                         else:
                             messages.warning(request, "Profile updated, but we couldn't generate an AI embedding for your resume.")
@@ -222,7 +222,7 @@ def manage_skills_view(request):
             skill.profile = profile
             skill.save()
             messages.success(request, "New skill successfully added!")
-            return redirect('dashboard') # Redirect back to the same page
+            return redirect('manage_skills') # Redirect back to the same page
     else:
         form = SkillForm() # A blank form for GET requests
 
@@ -245,7 +245,7 @@ def manage_experience_view(request):
             experience.profile = profile
             experience.save()
             messages.success(request, "New experience entry successfully added!")
-            return redirect('dashboard')
+            return redirect('manage_experience')
     else:
         form = ExperienceForm()
     experiences = Experience.objects.filter(profile=profile)
@@ -262,7 +262,7 @@ def manage_certifications_view(request):
             certification.profile = profile
             certification.save()
             messages.success(request, "New certification successfully added!")
-            return redirect('dashboard')
+            return redirect('manage_certifications')
     else:
         form = CertificationForm()
     certifications = Certification.objects.filter(profile=profile)
@@ -302,3 +302,53 @@ def delete_certification_view(request, pk):
     
     # We can reuse the generic delete confirmation template
     return render(request, 'profiles/confirm_delete.html', {'object': certification, 'type': 'Certification'})
+
+@login_required
+def manage_education_view(request):
+    profile, created = Profile.objects.get_or_create(user=request.user)
+    educations = Education.objects.filter(profile=profile)
+    
+    if request.method == 'POST':
+        form = EducationForm(request.POST)
+        if form.is_valid():
+            education = form.save(commit=False)
+            education.profile = profile
+            education.save()
+            messages.success(request, f"Education at '{education.school}' added!")
+            return redirect('manage_education')
+    else:
+        form = EducationForm()
+    
+    return render(request, 'profiles/manage_education.html', {
+        'educations': educations,
+        'form': form,
+        'profile': profile,
+    })
+
+@login_required
+def edit_education_view(request, pk):
+    education = get_object_or_404(Education, pk=pk, profile__user=request.user)
+    if request.method == 'POST':
+        form = EducationForm(request.POST, instance=education)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Education entry updated!")
+            return redirect('manage_education')
+    else:
+        form = EducationForm(instance=education)
+    
+    context = {
+        'form': form,
+        'form_title': 'Edit Education',
+        'submit_button_text': 'Update'
+    }
+    return render(request, 'profiles/light_form_template.html', context)
+
+@login_required
+def delete_education_view(request, pk):
+    education = get_object_or_404(Education, pk=pk, profile__user=request.user)
+    if request.method == 'POST':
+        education.delete()
+        messages.info(request, "Education entry deleted.")
+        return redirect('manage_education')
+    return render(request, 'profiles/confirm_delete.html', {'object': education, 'type': 'Education Entry'})

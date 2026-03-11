@@ -24,4 +24,10 @@
             <i class="bi bi-patch-check-fill me-1"></i>Certifications
         </a>
     </li>
+    <li class="nav-item">
+        <a class="nav-link {% if request.resolver_match.url_name == 'manage_education' %}active{% endif %}"
+            href="{% url 'manage_education' %}">
+            <i class="bi bi-book-fill me-1"></i>Education
+        </a>
+    </li>
 </ul>

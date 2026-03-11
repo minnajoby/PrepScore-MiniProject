@@ -17,9 +17,33 @@
         </a>
     </li>
     <li class="nav-item">
-        <a class="nav-link {% if request.resolver_match.url_name == 'manage_profile' or request.resolver_match.url_name == 'manage_skills' or request.resolver_match.url_name == 'manage_experience' or request.resolver_match.url_name == 'manage_certifications' %}active{% endif %}"
+        <a class="nav-link {% if request.resolver_match.url_name == 'manage_profile' %}active{% endif %}"
             href="{% url 'manage_profile' %}">
-            <i class="bi bi-person-lines-fill me-2"></i>Edit Profile
+            <i class="bi bi-person-badge me-2"></i>Core Profile
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if request.resolver_match.url_name == 'manage_skills' %}active{% endif %}"
+            href="{% url 'manage_skills' %}">
+            <i class="bi bi-tools me-2"></i>Skills
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if request.resolver_match.url_name == 'manage_experience' %}active{% endif %}"
+            href="{% url 'manage_experience' %}">
+            <i class="bi bi-briefcase me-2"></i>Experience
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if request.resolver_match.url_name == 'manage_education' %}active{% endif %}"
+            href="{% url 'manage_education' %}">
+            <i class="bi bi-book me-2"></i>Education
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if request.resolver_match.url_name == 'manage_certifications' %}active{% endif %}"
+            href="{% url 'manage_certifications' %}">
+            <i class="bi bi-award me-2"></i>Certifications
         </a>
     </li>
     <li class="nav-item">
