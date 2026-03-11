@@ -349,6 +349,8 @@ def edit_education_view(request, pk):
 
 @login_required
 def delete_education_view(request, pk):
+    education = get_object_or_404(Education, pk=pk, profile__user=request.user)
+    if request.method == 'POST':
         education.delete()
         messages.info(request, "Education entry deleted.")
         return redirect('manage_education')

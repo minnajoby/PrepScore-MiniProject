@@ -83,7 +83,7 @@ class ProjectForm(forms.ModelForm):
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g. PrepScore Platform'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Describe your role and impact...'}),
-            'link': forms.URLField(attrs={'class': 'form-control', 'placeholder': 'https://github.com/...'}),
+            'link': forms.URLInput(attrs={'class': 'form-control', 'placeholder': 'https://github.com/...'}),
             'technologies_used': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g. Django, Python, Bootstrap'}),
         }
     

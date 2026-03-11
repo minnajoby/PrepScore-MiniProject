@@ -2,6 +2,7 @@
 import os
 import joblib
 import random
+import numpy as np
 from django.conf import settings
 from .models import Profile, Skill, Experience, Certification
 from .config import SKILL_SCORES, DEFAULT_SKILL_SCORE, BASE_POINTS
@@ -67,15 +68,34 @@ def calculate_rule_based_score(profile):
     return min(final_score, 100)
 
 
+# --- 2. THE LIVE ML SCORING ENGINE ---
+
+MODEL_PATH = os.path.join(settings.BASE_DIR, 'profiles', 'ml_models', 'prepscore_model.joblib')
 PREPSCORE_MODEL = None
+
+try:
+    if os.path.exists(MODEL_PATH):
+        PREPSCORE_MODEL = joblib.load(MODEL_PATH)
+except Exception as e:
+    print(f"Error loading ML model: {e}")
+
 def profile_to_vector(profile):
     """
-    Placeholder for future ML feature engineering.
-    Converts a profile instance into a numerical vector for the model.
+    Extracts numerical features from a Profile instance for the ML model.
+    Order must match the training script: 
+    [num_skills, num_experiences, num_educations, num_certifications, num_projects]
     """
-    # For now, just return a dummy vector if needed, 
-    # but the fallback handles None model anyway.
-    return []
+    if not profile:
+        return np.zeros((1, 5))
+    
+    vector = [
+        profile.num_skills,
+        profile.num_experiences,
+        profile.num_educations,
+        profile.num_certifications,
+        profile.num_projects
+    ]
+    return np.array(vector).reshape(1, -1)
 
 def calculate_ml_score(profile):
     """
@@ -83,22 +103,28 @@ def calculate_ml_score(profile):
     """
     if not profile: return 0
     
+    # Check if there's any content at all
     has_content = (
         profile.num_skills > 0 or profile.num_educations > 0 or
-        profile.num_experiences > 0 or profile.num_certifications > 0
+        profile.num_experiences > 0 or profile.num_certifications > 0 or
+        profile.num_projects > 0
     )
     if not has_content: return 0
+
     if PREPSCORE_MODEL is None: 
-        # Fallback to rule-based score if the model isn't trained yet
+        # Fallback to rule-based score if the model isn't trained or loaded yet
         return calculate_rule_based_score(profile)
 
-    feature_vector = profile_to_vector(profile)
-    predicted_score = PREPSCORE_MODEL.predict(feature_vector)[0]
-    
-    # Use standard rounding, not int()
-    final_score = round(predicted_score)
-    
-    return max(0, min(final_score, 100)) # Ensure score is between 0 and 100
+    try:
+        feature_vector = profile_to_vector(profile)
+        predicted_score = PREPSCORE_MODEL.predict(feature_vector)[0]
+        
+        # Use standard rounding
+        final_score = round(float(predicted_score))
+        return max(0, min(final_score, 100))
+    except Exception as e:
+        print(f"Error during ML prediction: {e}")
+        return calculate_rule_based_score(profile)
 
 
 # --- 3. THE RECOMMENDATION & ANALYSIS ENGINES ---
