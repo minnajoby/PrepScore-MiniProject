@@ -1,6 +1,12 @@
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
-from .models import Skill, Experience, Certification, Education
+from .models import Skill, Experience, Certification, Education, Project
+
+@receiver([post_save, post_delete], sender=Project)
+def update_project_count(sender, instance, **kwargs):
+    profile = instance.profile
+    profile.num_projects = Project.objects.filter(profile=profile).count()
+    profile.save(update_fields=['num_projects'])
 
 @receiver([post_save, post_delete], sender=Skill)
 def update_skill_count(sender, instance, **kwargs):

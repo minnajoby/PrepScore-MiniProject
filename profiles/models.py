@@ -15,6 +15,7 @@ class Profile(models.Model):
     resume_embedding = VectorField(dimensions=768, null=True, blank=True)
 
     # AI Engine Features
+    num_projects = models.IntegerField(default=0)
     num_skills = models.IntegerField(default=0)
     num_experiences = models.IntegerField(default=0)
     num_educations = models.IntegerField(default=0)
@@ -55,3 +56,13 @@ class Education(models.Model):
 
     def __str__(self):
         return f"{self.degree} at {self.school}"
+
+class Project(models.Model):
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    title = models.CharField(max_length=200)
+    description = models.TextField(blank=True)
+    link = models.URLField(max_length=500, blank=True)
+    technologies_used = models.CharField(max_length=255, blank=True)
+
+    def __str__(self):
+        return self.title

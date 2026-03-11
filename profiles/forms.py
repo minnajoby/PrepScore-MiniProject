@@ -1,7 +1,7 @@
 # In profiles/forms.py
 
 from django import forms
-from .models import Profile, Skill, Experience, Certification, Education
+from .models import Profile, Skill, Experience, Certification, Education, Project
 from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
@@ -74,5 +74,16 @@ class EducationForm(forms.ModelForm):
             'degree': forms.TextInput(attrs={'class': 'form-control'}),
             'field_of_study': forms.TextInput(attrs={'class': 'form-control'}),
             'date_graduated': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+        }
+
+class ProjectForm(forms.ModelForm):
+    class Meta:
+        model = Project
+        fields = ['title', 'description', 'link', 'technologies_used']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g. PrepScore Platform'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Describe your role and impact...'}),
+            'link': forms.URLField(attrs={'class': 'form-control', 'placeholder': 'https://github.com/...'}),
+            'technologies_used': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g. Django, Python, Bootstrap'}),
         }
     
