@@ -38,6 +38,17 @@ class Experience(models.Model):
     def __str__(self):
         return self.title
 
+class ScoreHistory(models.Model):
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='score_history')
+    score = models.IntegerField()
+    date_calculated = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-date_calculated']
+
+    def __str__(self):
+        return f"{self.profile.user.username} - {self.score} on {self.date_calculated.strftime('%Y-%m-%d')}"
+
 class Certification(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     name = models.CharField(max_length=200)

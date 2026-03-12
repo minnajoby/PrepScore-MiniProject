@@ -155,6 +155,12 @@
                             class="btn btn-primary rounded-pill w-100 fw-bold shadow-sm hover-glow">
                             Start Analysis
                         </a>
+                        {% if profile.resume_pdf %}
+                        <button class="btn btn-outline-light rounded-pill w-100 fw-bold shadow-sm mt-2"
+                            data-bs-toggle="modal" data-bs-target="#resumeModal">
+                            <i class="bi bi-file-earmark-pdf me-2"></i>View Resume
+                        </button>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -238,6 +244,14 @@
         </div>
     </div>
 
+    <!-- === PROGRESS TREND === -->
+    <div class="glass-card p-4 mb-5">
+        <h5 class="fw-bold mb-4"><i class="bi bi-activity text-info me-2"></i> PrepScore Progress</h5>
+        <div style="height: 250px;">
+            <canvas id="historyChart"></canvas>
+        </div>
+    </div>
+
     <!-- === ACTIONABLE RECOMMENDATIONS === -->
     <div class="glass-card p-4 p-md-5 mb-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -275,6 +289,34 @@
     </div>
 </div>
 
+
+<!-- Resume Preview Modal -->
+<div class="modal fade" id="resumeModal" tabindex="-1" aria-labelledby="resumeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-white border-opacity-10"
+            style="backdrop-filter: blur(20px); background: rgba(13, 27, 42, 0.9) !important;">
+            <div class="modal-header border-bottom border-white border-opacity-10">
+                <h5 class="modal-title fw-bold" id="resumeModalLabel"><i
+                        class="bi bi-file-earmark-pdf me-2 text-primary"></i>Resume Preview</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0" style="height: 80vh; overflow: hidden; border-radius: 0 0 1rem 1rem;">
+                {% if profile.resume_pdf %}
+                <embed src="{{ profile.resume_pdf.url }}" type="application/pdf" width="100%" height="100%"
+                    style="border-radius: 0 0 1rem 1rem;" />
+                {% else %}
+                <div class="d-flex flex-column align-items-center justify-content-center h-100 p-5 text-center">
+                    <i class="bi bi-file-earmark-x fs-1 text-white-50 mb-3"></i>
+                    <h5 class="text-white">No Resume Found</h5>
+                    <p class="text-white-50">Please upload a resume in the Core Profile section to enable preview.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- CHARTS JS -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
@@ -306,11 +348,11 @@
         requestAnimationFrame(animate);
 
         // --- Distribution Chart ---
-        const ctx = document.getElementById('distributionChart').getContext('2d');
+        const distCtx = document.getElementById('distributionChart').getContext('2d');
         const contributionData = {{ score_contributions| safe
     }};
 
-    new Chart(ctx, {
+    new Chart(distCtx, {
         type: 'doughnut',
         data: {
             labels: Object.keys(contributionData),
@@ -327,11 +369,55 @@
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: {
-                    display: false
-                }
+                legend: { display: false }
             },
             cutout: '70%'
+        }
+    });
+
+    // --- History Chart ---
+    const historyCtx = document.getElementById('historyChart').getContext('2d');
+    const historyData = [
+        {% for record in history %}
+    { x: "{{ record.date_calculated|date:'M d' }}", y: { { record.score } } } {% if not forloop.last %}, {% endif %}
+    {% endfor %}
+        ];
+
+    new Chart(historyCtx, {
+        type: 'line',
+        data: {
+            labels: historyData.map(d => d.x),
+            datasets: [{
+                label: 'PrepScore',
+                data: historyData.map(d => d.y),
+                borderColor: '#3a86ff',
+                backgroundColor: 'rgba(58, 134, 255, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: '#fff',
+                pointBorderColor: '#3a86ff',
+                pointRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    grid: { color: 'rgba(255,255,255,0.05)' },
+                    ticks: { color: 'rgba(255,255,255,0.5)' }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { color: 'rgba(255,255,255,0.5)' }
+                }
+            },
+            plugins: {
+                legend: { display: false }
+            }
         }
     });
     });

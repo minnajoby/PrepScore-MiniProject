@@ -5,7 +5,7 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Profile, Skill, Experience, Certification, Education, Project
+from .models import Profile, Skill, Experience, Certification, Education, Project, ScoreHistory
 from .forms import (
     LoginForm, ProfileForm, SkillForm, ExperienceForm,
     CertificationForm, CustomUserCreationForm, EducationForm, ProjectForm
@@ -84,6 +84,15 @@ def dashboard_view(request):
     suggestions = get_suggestions(profile, score)
     score_contributions = get_score_contributions(profile)
 
+    # Record History
+    if score > 0:
+        last_record = ScoreHistory.objects.filter(profile=profile).first()
+        if not last_record or last_record.score != score:
+            ScoreHistory.objects.create(profile=profile, score=score)
+            
+    history = list(ScoreHistory.objects.filter(profile=profile).order_by('date_calculated')[:7])
+    history.reverse() # Order for chart: oldest to newest
+
     context = {
         'profile': profile, 'skills': skills,
         'experiences': experiences, 'certifications': certifications,
@@ -91,6 +100,7 @@ def dashboard_view(request):
         'projects': Project.objects.filter(profile=profile),
         'score': score, 'suggestions': suggestions,
         'score_contributions': score_contributions,
+        'history': history,
     }
     return render(request, 'profiles/dashboard.html', context)
 
