@@ -7,83 +7,136 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
 <style>
     :root {
-        --glass-bg: rgba(255, 255, 255, 0.05);
-        --glass-border: rgba(255, 255, 255, 0.1);
+        --glass-bg: rgba(255, 255, 255, 0.03);
+        --glass-bg-hover: rgba(255, 255, 255, 0.07);
+        --glass-border: rgba(255, 255, 255, 0.08);
         --accent-primary: #3a86ff;
         --accent-secondary: #8338ec;
         --accent-success: #06d6a0;
         --accent-warning: #ffbe0b;
+        --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
     }
 
     .hero-glass {
-        background: linear-gradient(135deg, rgba(58, 134, 255, 0.15) 0%, rgba(131, 56, 236, 0.15) 100%);
-        backdrop-filter: blur(20px);
+        background: linear-gradient(135deg, rgba(58, 134, 255, 0.08) 0%, rgba(131, 56, 236, 0.08) 100%);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
         border: 1px solid var(--glass-border);
-        border-radius: 2rem;
+        border-radius: 2.5rem;
+        box-shadow: var(--card-shadow);
+    }
+
+    .glass-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border: 1px solid var(--glass-border);
+        border-radius: 1.5rem;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        box-shadow: var(--card-shadow);
+    }
+
+    .glass-card:hover {
+        background: var(--glass-bg-hover);
+        border-color: rgba(255, 255, 255, 0.2);
+        transform: translateY(-5px);
     }
 
     .score-ring {
         position: relative;
-        width: 180px;
-        height: 180px;
+        width: 200px;
+        height: 200px;
         border-radius: 50%;
         display: grid;
         place-items: center;
         background: conic-gradient(var(--accent-primary) 0%, var(--glass-border) 0%);
-        transition: all 0.5s ease;
+        transition: all 0.8s cubic-bezier(0.165, 0.84, 0.44, 1);
+        box-shadow: 0 0 30px rgba(58, 134, 255, 0.2);
     }
 
     .score-ring::after {
         content: "";
         position: absolute;
-        width: 140px;
-        height: 140px;
+        width: 165px;
+        height: 165px;
         background: #0d1b2a;
         border-radius: 50%;
-        box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+        box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.6);
+        z-index: 1;
     }
 
     .score-value {
         position: relative;
         z-index: 2;
-        font-size: 3.5rem;
+        font-size: 4rem;
         font-weight: 800;
-        background: linear-gradient(to bottom, #fff, #a9d6e5);
+        background: linear-gradient(180deg, #fff 0%, #a9d6e5 100%);
         -webkit-background-clip: text;
         background-clip: text;
         -webkit-text-fill-color: transparent;
+        letter-spacing: -2px;
     }
 
-    .stat-pill {
-        background: var(--glass-bg);
-        border: 1px solid var(--glass-border);
-        border-radius: 1rem;
-        padding: 1rem;
+    .stat-cell {
+        padding: 1.25rem;
+        border-radius: 1.25rem;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid transparent;
         transition: all 0.3s ease;
     }
 
-    .stat-pill:hover {
-        background: rgba(255, 255, 255, 0.1);
-        transform: translateY(-5px);
+    .stat-cell:hover {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: var(--glass-border);
     }
 
     .insight-card {
-        border-left: 4px solid var(--accent-primary);
-        background: var(--glass-bg);
+        border-left: 3px solid var(--accent-primary);
+        background: rgba(255, 255, 255, 0.02);
+        backdrop-filter: blur(10px);
         transition: all 0.3s ease;
     }
 
     .insight-card:hover {
-        background: rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.05);
+        transform: translateX(5px);
+    }
+
+    .btn-premium {
+        background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+        border: none;
+        color: white;
+        padding: 0.8rem 1.5rem;
+        border-radius: 1rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(58, 134, 255, 0.3);
+    }
+
+    .btn-premium:hover {
+        transform: scale(1.02);
+        box-shadow: 0 6px 20px rgba(58, 134, 255, 0.4);
+        color: white;
     }
 
     .progress {
-        background-color: rgba(255, 255, 255, 0.1) !important;
-        height: 8px !important;
+        background: rgba(255, 255, 255, 0.05) !important;
+        height: 6px !important;
+        overflow: visible !important;
     }
 
-    .hover-glow:hover {
-        box-shadow: 0 0 20px rgba(58, 134, 255, 0.4);
+    .progress-bar {
+        border-radius: 10px;
+        position: relative;
+        box-shadow: 0 0 10px inherit;
+    }
+
+    .card-title-premium {
+        font-size: 0.9rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: rgba(255, 255, 255, 0.5);
     }
 </style>
 {% endblock %}
@@ -91,95 +144,108 @@
 {% block dashboard_content %}
 <div class="animate__animated animate__fadeIn">
 
-    <!-- === HERO COMMAND CENTER === -->
-    <div class="hero-glass p-4 p-md-5 mb-5 shadow-lg">
-        <div class="row align-items-center g-5">
-            <!-- Left: Score Visualization -->
-            <div class="col-lg-4 d-flex flex-column align-items-center">
-                <div class="score-ring shadow-lg mb-3" id="mainScoreRing" data-score="{{ score }}">
+    <!-- === MASTER COMMAND CENTER === -->
+    <div class="row g-4 mb-5">
+        <!-- PrepScore Master Card -->
+        <div class="col-lg-5">
+            <div
+                class="hero-glass h-100 p-4 p-xl-5 d-flex flex-column align-items-center justify-content-center text-center">
+                <div class="score-ring mb-4" id="mainScoreRing" data-score="{{ score }}">
                     <div class="score-value" id="scoreValue">{{ score }}</div>
                 </div>
-                <h4 class="fw-bold text-white mb-1">PrepScore</h4>
-                <p class="text-white-50 small mb-0">Market Readiness Index</p>
-            </div>
+                <h2 class="fw-bold text-white mb-1">PrepScore</h2>
+                <p class="text-white-50 mb-4">Market Readiness Index</p>
 
-            <!-- Middle: Quick Stats Grid -->
-            <div class="col-lg-6">
-                <div class="row g-3">
-                    <div class="col-md-4 col-6">
-                        <div class="stat-pill">
-                            <i class="bi bi-briefcase text-primary fs-3 mb-2 d-block"></i>
-                            <h3 class="fw-bold mb-0">{{ profile.num_experiences }}</h3>
-                            <span class="text-white-50 x-small">Experience</span>
-                        </div>
-                    </div>
-                    <div class="col-md-4 col-6">
-                        <div class="stat-pill">
-                            <i class="bi bi-tools text-info fs-3 mb-2 d-block"></i>
-                            <h3 class="fw-bold mb-0">{{ profile.num_skills }}</h3>
-                            <span class="text-white-50 x-small">Skills</span>
-                        </div>
-                    </div>
-                    <div class="col-md-4 col-6">
-                        <div class="stat-pill">
-                            <i class="bi bi-folder-fill text-primary-emphasis fs-3 mb-2 d-block"></i>
-                            <h3 class="fw-bold mb-0">{{ profile.num_projects }}</h3>
-                            <span class="text-white-50 x-small">Projects</span>
-                        </div>
-                    </div>
-                    <div class="col-md-4 col-6">
-                        <div class="stat-pill">
-                            <i class="bi bi-book text-success fs-3 mb-2 d-block"></i>
-                            <h3 class="fw-bold mb-0">{{ profile.num_educations }}</h3>
-                            <span class="text-white-50 x-small">Education</span>
-                        </div>
-                    </div>
-                    <div class="col-md-4 col-6">
-                        <div class="stat-pill">
-                            <i class="bi bi-award text-warning fs-3 mb-2 d-block"></i>
-                            <h3 class="fw-bold mb-0">{{ profile.num_certifications }}</h3>
-                            <span class="text-white-50 x-small">Certs</span>
-                        </div>
-                    </div>
+                <div class="d-flex gap-2 w-100 mt-auto">
+                    <a href="{% url 'gap_analysis' %}" class="btn-premium flex-grow-1">
+                        <i class="bi bi-stars me-2"></i>Analyze
+                    </a>
+                    {% if profile.resume_pdf %}
+                    <button class="btn btn-outline-light rounded-4 px-4 border-white border-opacity-25"
+                        data-bs-toggle="modal" data-bs-target="#resumeModal">
+                        <i class="bi bi-file-earmark-pdf"></i>
+                    </button>
+                    {% endif %}
                 </div>
             </div>
+        </div>
 
-            <!-- Right: AI CTA -->
-            <div class="col-lg-3">
-                <div class="h-100 d-flex flex-column justify-content-center">
-                    <div class="p-4 rounded-4 bg-white bg-opacity-10 border border-white border-opacity-10 text-center">
-                        <i class="bi bi-stars text-warning fs-1 mb-2"></i>
-                        <h5 class="fw-bold text-white mb-2">AI Insights</h5>
-                        <p class="text-white-50 small mb-3">Optimize for your target role.</p>
-                        <a href="{% url 'gap_analysis' %}"
-                            class="btn btn-primary rounded-pill w-100 fw-bold shadow-sm hover-glow">
-                            Start Analysis
-                        </a>
-                        {% if profile.resume_pdf %}
-                        <button class="btn btn-outline-light rounded-pill w-100 fw-bold shadow-sm mt-2"
-                            data-bs-toggle="modal" data-bs-target="#resumeModal">
-                            <i class="bi bi-file-earmark-pdf me-2"></i>View Resume
-                        </button>
-                        {% endif %}
+        <!-- Quick Stats Grid -->
+        <div class="col-lg-7">
+            <div class="glass-card h-100 p-4 p-xl-5">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h6 class="card-title-premium mb-0">Profile Statistics</h6>
+                    <span
+                        class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill px-3">Live
+                        Feed</span>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-sm-4 col-6">
+                        <div class="stat-cell text-center">
+                            <i class="bi bi-briefcase text-primary fs-3 mb-2 d-block"></i>
+                            <h3 class="fw-bold text-white mb-0">{{ profile.num_experiences }}</h3>
+                            <span class="text-white-50 small">Experience</span>
+                        </div>
+                    </div>
+                    <div class="col-sm-4 col-6">
+                        <div class="stat-cell text-center">
+                            <i class="bi bi-tools text-info fs-3 mb-2 d-block"></i>
+                            <h3 class="fw-bold text-white mb-0">{{ profile.num_skills }}</h3>
+                            <span class="text-white-50 small">Skills</span>
+                        </div>
+                    </div>
+                    <div class="col-sm-4 col-6">
+                        <div class="stat-cell text-center">
+                            <i class="bi bi-folder-fill text-primary-emphasis fs-3 mb-2 d-block"></i>
+                            <h3 class="fw-bold text-white mb-0">{{ profile.num_projects }}</h3>
+                            <span class="text-white-50 small">Projects</span>
+                        </div>
+                    </div>
+                    <div class="col-sm-4 col-6">
+                        <div class="stat-cell text-center">
+                            <i class="bi bi-book text-success fs-3 mb-2 d-block"></i>
+                            <h3 class="fw-bold text-white mb-0">{{ profile.num_educations }}</h3>
+                            <span class="text-white-50 small">Education</span>
+                        </div>
+                    </div>
+                    <div class="col-sm-4 col-6">
+                        <div class="stat-cell text-center">
+                            <i class="bi bi-award text-warning fs-3 mb-2 d-block"></i>
+                            <h3 class="fw-bold text-white mb-0">{{ profile.num_certifications }}</h3>
+                            <span class="text-white-50 small">Certs</span>
+                        </div>
+                    </div>
+                    <div class="col-sm-4 col-6">
+                        <div class="stat-cell text-center">
+                            <i class="bi bi-lightning-charge text-danger fs-3 mb-2 d-block"></i>
+                            <h3 class="fw-bold text-white mb-0">Pro</h3>
+                            <span class="text-white-50 small">Status</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- === ANALYTICS & BREAKDOWN === -->
+    <!-- === ANALYTICS SUITE === -->
     <div class="row g-4 mb-5">
-        <!-- Profile Strength Breakdown -->
+        <!-- Strength Analysis -->
         <div class="col-lg-8">
-            <div class="glass-card p-4 h-100">
-                <h5 class="fw-bold mb-4"><i class="bi bi-graph-up-arrow text-primary me-2"></i> Strength Analysis</h5>
+            <div class="glass-card p-4 p-xl-5 h-100">
+                <div class="d-flex align-items-center mb-4">
+                    <div class="icon-box-primary me-3">
+                        <i class="bi bi-graph-up-arrow text-primary fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold text-white mb-0">Strength Analysis</h5>
+                </div>
 
                 <div class="row g-4">
                     <div class="col-md-6">
                         <div class="mb-4">
-                            <label class="d-flex justify-content-between text-white-50 small mb-1">
+                            <label class="d-flex justify-content-between text-white-50 small mb-2">
                                 <span>TECHNICAL EXPERIENCE</span>
-                                <span>{{ profile.num_experiences }}/4</span>
+                                <span class="text-white fw-bold">{{ profile.num_experiences }}/4</span>
                             </label>
                             <div class="progress rounded-pill">
                                 <div class="progress-bar bg-primary"
@@ -187,21 +253,31 @@
                             </div>
                         </div>
                         <div class="mb-4">
-                            <label class="d-flex justify-content-between text-white-50 small mb-1">
+                            <label class="d-flex justify-content-between text-white-50 small mb-2">
                                 <span>SKILL SET DEPTH</span>
-                                <span>{{ profile.num_skills }}/10</span>
+                                <span class="text-white fw-bold">{{ profile.num_skills }}/10</span>
                             </label>
                             <div class="progress rounded-pill">
                                 <div class="progress-bar bg-info"
                                     style="width: {% widthratio profile.num_skills 10 100 %}%"></div>
                             </div>
                         </div>
+                        <div class="mb-0">
+                            <label class="d-flex justify-content-between text-white-50 small mb-2">
+                                <span>TECHNICAL PROJECTS</span>
+                                <span class="text-white fw-bold">{{ profile.num_projects }}/3</span>
+                            </label>
+                            <div class="progress rounded-pill">
+                                <div class="progress-bar bg-primary-emphasis"
+                                    style="width: {% widthratio profile.num_projects 3 100 %}%"></div>
+                            </div>
+                        </div>
                     </div>
                     <div class="col-md-6">
                         <div class="mb-4">
-                            <label class="d-flex justify-content-between text-white-50 small mb-1">
+                            <label class="d-flex justify-content-between text-white-50 small mb-2">
                                 <span>ACADEMIC BACKGROUND</span>
-                                <span>{{ profile.num_educations }}/3</span>
+                                <span class="text-white fw-bold">{{ profile.num_educations }}/3</span>
                             </label>
                             <div class="progress rounded-pill">
                                 <div class="progress-bar bg-success"
@@ -209,23 +285,13 @@
                             </div>
                         </div>
                         <div class="mb-4">
-                            <label class="d-flex justify-content-between text-white-50 small mb-1">
+                            <label class="d-flex justify-content-between text-white-50 small mb-2">
                                 <span>PROFESSIONAL CERTS</span>
-                                <span>{{ profile.num_certifications }}/4</span>
+                                <span class="text-white fw-bold">{{ profile.num_certifications }}/4</span>
                             </label>
                             <div class="progress rounded-pill">
                                 <div class="progress-bar bg-warning"
                                     style="width: {% widthratio profile.num_certifications 4 100 %}%"></div>
-                            </div>
-                        </div>
-                        <div class="mb-0">
-                            <label class="d-flex justify-content-between text-white-50 small mb-1">
-                                <span>TECHNICAL PROJECTS</span>
-                                <span>{{ profile.num_projects }}/3</span>
-                            </label>
-                            <div class="progress rounded-pill">
-                                <div class="progress-bar bg-primary-emphasis"
-                                    style="width: {% widthratio profile.num_projects 3 100 %}%"></div>
                             </div>
                         </div>
                     </div>
@@ -235,58 +301,61 @@
 
         <!-- Weighting Distribution -->
         <div class="col-lg-4">
-            <div class="glass-card p-4 h-100 d-flex flex-column">
-                <h5 class="fw-bold mb-4"><i class="bi bi-pie-chart text-info me-2"></i> Points Distribution</h5>
+            <div class="glass-card p-4 p-xl-5 h-100 d-flex flex-column">
+                <h5 class="fw-bold text-white mb-4"><i class="bi bi-pie-chart text-info me-2"></i> Points Distribution
+                </h5>
                 <div class="flex-grow-1 d-flex align-items-center justify-content-center">
-                    <canvas id="distributionChart" style="max-height: 200px;"></canvas>
+                    <canvas id="distributionChart" style="max-height: 220px;"></canvas>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- === PROGRESS TREND === -->
-    <div class="glass-card p-4 mb-5">
-        <h5 class="fw-bold mb-4"><i class="bi bi-activity text-info me-2"></i> PrepScore Progress</h5>
-        <div style="height: 250px;">
+    <!-- === PERFORMANCE TREND === -->
+    <div class="glass-card p-4 p-xl-5 mb-5">
+        <h5 class="fw-bold text-white mb-4"><i class="bi bi-activity text-info me-2"></i> PrepScore Progress</h5>
+        <div style="height: 300px;">
             <canvas id="historyChart"></canvas>
         </div>
     </div>
 
     <!-- === ACTIONABLE RECOMMENDATIONS === -->
-    <div class="glass-card p-4 p-md-5 mb-4">
+    <div class="glass-card p-4 p-xl-5 mb-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h5 class="fw-bold mb-0">
-                <i class="bi bi-lightbulb-fill text-warning me-2"></i> Personalized Recommendations
+            <h5 class="fw-bold text-white mb-0">
+                <i class="bi bi-lightbulb-fill text-warning me-2"></i> Smart Recommendations
             </h5>
-            <span class="badge bg-white bg-opacity-10 text-white rounded-pill px-3">{{ suggestions|length }}
-                Actions</span>
+            <span
+                class="badge bg-white bg-opacity-10 text-white rounded-pill px-3 py-2 fw-medium border border-white border-opacity-10">
+                {{ suggestions|length }} Priority Actions
+            </span>
         </div>
 
         <div class="row g-3">
             {% for suggestion in suggestions %}
-            <div class="col-md-6">
-                <div class="insight-card p-3 rounded-3 h-100">
-                    <div class="d-flex">
-                        <div class="me-3">
-                            {% with s=suggestion|lower %}
-                            <i
-                                class="bi {% if 'experience' in s or 'project' in s %}bi-briefcase-fill text-primary{% elif 'skill' in s or 'git' in s or 'sql' in s %}bi-tools text-info{% elif 'bio' in s or 'headline' in s or 'linkedin' in s %}bi-person-badge text-warning{% else %}bi-stars text-success{% endif %} fs-4"></i>
-                            {% endwith %}
-                        </div>
-                        <div>
-                            <p class="mb-0 text-white opacity-75 small">{{ suggestion }}</p>
-                        </div>
+            <div class="col-md-6 col-xl-4">
+                <div class="insight-card p-4 rounded-4 h-100 d-flex align-items-center">
+                    <div class="icon-box-sm me-3">
+                        {% with s=suggestion|lower %}
+                        <i
+                            class="bi {% if 'experience' in s or 'project' in s %}bi-briefcase-fill text-primary{% elif 'skill' in s or 'git' in s or 'sql' in s %}bi-tools text-info{% elif 'bio' in s or 'headline' in s or 'linkedin' in s %}bi-person-badge text-warning{% else %}bi-stars text-success{% endif %} fs-4"></i>
+                        {% endwith %}
+                    </div>
+                    <div>
+                        <p class="mb-0 text-white opacity-75 small fw-medium">{{ suggestion }}</p>
                     </div>
                 </div>
             </div>
             {% empty %}
-            <div class="col-12 text-center py-4">
-                <i class="bi bi-check2-circle text-success fs-1 opacity-50 mb-2"></i>
-                <h6 class="text-white-50">Your profile is fully optimized. Amazing job!</h6>
+            <div class="col-12 text-center py-5">
+                <div class="display-1 text-white-50 opacity-25 mb-3"><i class="bi bi-check2-circle"></i></div>
+                <h5 class="text-white fw-bold">Your profile is fully optimized!</h5>
+                <p class="text-white-50 mb-0">Check back later for new insights.</p>
             </div>
             {% endfor %}
         </div>
     </div>
+</div>
 </div>
 
 
@@ -349,8 +418,7 @@
 
         // --- Distribution Chart ---
         const distCtx = document.getElementById('distributionChart').getContext('2d');
-        const contributionData = {{ score_contributions| safe
-    }};
+        const contributionData = {{ score_contributions|safe }};
 
     new Chart(distCtx, {
         type: 'doughnut',
@@ -379,7 +447,7 @@
     const historyCtx = document.getElementById('historyChart').getContext('2d');
     const historyData = [
         {% for record in history %}
-    { x: "{{ record.date_calculated|date:'M d' }}", y: { { record.score } } } {% if not forloop.last %}, {% endif %}
+    { x: "{{ record.date_calculated|date:'M d' }}", y: {{ record.score }} } {% if not forloop.last %}, {% endif %}
     {% endfor %}
         ];
 
