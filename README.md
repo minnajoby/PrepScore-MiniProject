@@ -92,12 +92,6 @@ PrepScore is a modern, AI-driven platform designed to help professionals and stu
 
 ---
 
-## 📸 Screenshots
-
-*(Add screenshots of your Dashboard and AI Analysis here once deployed)*
-
----
-
 ## 🤝 Contributing
 
 This is a personal mini-project, but feedback and suggestions are always welcome!
